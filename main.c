@@ -9,13 +9,13 @@ int main () {
 	char tela[15][25];
 	int i,j;
 	
-	initscr();
+	inicia_ncurses();
 
 	criar_tela(tela);
 	
 	loop(tela);
 
-	endwin();
+	finaliza_ncurses();
 
 	return 0;
 }
