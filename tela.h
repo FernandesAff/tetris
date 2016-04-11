@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void criar_tela(char [][25]);
-void mostrar_tela(char [][25]);
+typedef struct {
+	char peca;
+	int cor;
+} TipoTela;
+
+void criar_tela(TipoTela [][25]);
+void mostrar_tela(TipoTela [][25], int);
