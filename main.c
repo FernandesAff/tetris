@@ -4,6 +4,7 @@
 #include <ncurses.h>
 #include <locale.h>
 #include "tela.h"
+#include "engine.h"
 
 int main () {
 	char tela[15][25];
@@ -12,7 +13,10 @@ int main () {
 	initscr();
 
 	criar_tela(tela);
-	mostrar_tela(tela);	
+	
+	loop(tela);
+
+	//mostrar_tela(tela);	
 
 	getch();
 	endwin();
