@@ -17,9 +17,13 @@ int loop(char tela[][25]){
 
 	tela[10][10]='0'; // peca para teste de colisao
 
+	
+
 while (sair==0){ //mudar para setas
 	prevx=x;
 	prevy=y;	
+	
+	mostrar_tela(tela); //desenha
 
 	switch(getch())
 	{
@@ -49,8 +53,6 @@ while (sair==0){ //mudar para setas
 	
 	tela[prevy][prevx]=' '; // apaga posicao antiga
 	tela[y][x]='0'; //teste para o que seria a peca
-
-	mostrar_tela(tela);
 	}
 //pega caractere
 //opera sobre a peca
