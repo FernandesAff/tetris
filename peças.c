@@ -7,10 +7,8 @@ void gera_peca (TipoTela *p){
 	int z,y,i;	// i= contador; x= host do tamanho da peça
 
 	srand (time(NULL));
-	z= rand()%6;
+	z= 3+rand()%3;
 	y=2+rand()%3;
-	if(z<=3){
-		z=3;
 	}
 	for(i=0;i<z;i++){
 		p[i].peca='o';
@@ -21,7 +19,6 @@ void gera_peca (TipoTela *p){
 		p[i].cor=5;
 	}
 
-	return;
 }
 
 int main ()

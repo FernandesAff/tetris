@@ -1,3 +1,5 @@
+#define CORFUNDO 5
+#define CORBLOCO 3
 #define BLOCO '0'
 #define VAZIO '-'
 #include <ncurses.h>
@@ -50,7 +52,7 @@ void baixo(int *x, int *y, int *prevx, int *prevy, TipoTela tela[][25]){
 if (posicaolivre(tela[(*y)+1][*x]) && *y<14) *y+=1;
 else{
 	tela[*y][*x].peca= BLOCO;
-	tela[*y][*x].cor= 4; //fixa peca
+	tela[*y][*x].cor= CORBLOCO; //fixa peca
 	*x=1;*prevx=1;*y=1,*prevy=1; //''cria'' nova peca
 	}
 
@@ -68,7 +70,7 @@ int loop(TipoTela tela[][25]){
 	// incluir timeout() no futuro?
 	keypad(stdscr, TRUE);
 	tela[10][10].peca=BLOCO;
-	tela[10][10].cor=3; // peca para teste de colisao
+	tela[10][10].cor=CORBLOCO; // peca para teste de colisao
 
 
 	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
@@ -107,9 +109,9 @@ int loop(TipoTela tela[][25]){
 		}
 	
 		tela[prevy][prevx].peca=VAZIO;
-		tela[prevy][prevx].cor=5; // apaga posicao antiga
+		tela[prevy][prevx].cor=CORFUNDO; // apaga posicao antiga
 		tela[y][x].peca=BLOCO;
-		tela[y][x].cor=4; //teste para o que seria a peca
+		tela[y][x].cor=CORBLOCO; //teste para o que seria a peca
 		clear();
 	}
 	fim_tela(pontuacao);
