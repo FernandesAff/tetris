@@ -27,13 +27,13 @@ void inicio_tela(){
 	}
 
 	mvaddch(2, 2, ACS_ULCORNER);
-	mvaddch(2, 30, ACS_URCORNER);
+	mvaddch(2, 28, ACS_URCORNER);
 	mvaddch(18, 2, ACS_LLCORNER);
-	mvaddch(18, 30, ACS_LRCORNER);
-	mvhline(2, 3, ACS_HLINE, 14);
-	mvhline(18, 3, ACS_HLINE, 14);
+	mvaddch(18, 28, ACS_LRCORNER);
+	mvhline(2, 3, ACS_HLINE, 25);
+	mvhline(18, 3, ACS_HLINE, 25);
 	mvvline(3, 2, ACS_VLINE, 15);
-	mvvline(3,29, ACS_VLINE, 15);
+	mvvline(3,28, ACS_VLINE, 15);
 
 	move(19,3);
 	printw("APERTE UMA TECLA PARA INICIAR");
@@ -64,17 +64,17 @@ void mostrar_tela(TipoTela tela[][25], int pontos){
 	printw("Pontuação:%d", pontos);
 	mvaddch(7, 0, '=');
 	mvaddch(7, 1, ACS_RARROW);
-	mvaddch(7, 30, ACS_LARROW);
-	mvaddch(7, 31, '=');
+	mvaddch(7, 29, ACS_LARROW);
+	mvaddch(7, 30, '=');
+	
 	mvaddch(2, 2, ACS_ULCORNER);
-	mvaddch(2, 30, ACS_URCORNER);
+	mvaddch(2, 28, ACS_URCORNER);
 	mvaddch(18, 2, ACS_LLCORNER);
-	mvaddch(18, 30, ACS_LRCORNER);
-
-	mvhline(2, 3, ACS_HLINE, 14);
-	mvhline(18, 3, ACS_HLINE, 14);
+	mvaddch(18, 28, ACS_LRCORNER);
+	mvhline(2, 3, ACS_HLINE, 25);
+	mvhline(18, 3, ACS_HLINE, 25);
 	mvvline(3, 2, ACS_VLINE, 15);
-	mvvline(3,29, ACS_VLINE, 15);
+	mvvline(3,28, ACS_VLINE, 15);
 
 	for(i=0;i<15;i++){
 		for (j=0;j<25;j++){
@@ -99,13 +99,13 @@ void fim_tela(int pontos){
 	}
 
 	mvaddch(2, 2, ACS_ULCORNER);
-	mvaddch(2, 30, ACS_URCORNER);
+	mvaddch(2, 28, ACS_URCORNER);
 	mvaddch(18, 2, ACS_LLCORNER);
-	mvaddch(18, 30, ACS_LRCORNER);
-	mvhline(2, 3, ACS_HLINE, 14);
-	mvhline(18, 3, ACS_HLINE, 14);
+	mvaddch(18, 28, ACS_LRCORNER);
+	mvhline(2, 3, ACS_HLINE, 25);
+	mvhline(18, 3, ACS_HLINE, 25);
 	mvvline(3, 2, ACS_VLINE, 15);
-	mvvline(3,29, ACS_VLINE, 15);
+	mvvline(3,28, ACS_VLINE, 15);
 
 	move(19,3);
 	printw("FIM DE JOGO");
