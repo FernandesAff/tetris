@@ -53,7 +53,7 @@ if (posicaolivre(tela[(*y)+1][*x]) && *y<14) *y+=1;
 else{
 	tela[*y][*x].peca= BLOCO;
 	tela[*y][*x].cor= CORBLOCO; //fixa peca
-	*x=1;*prevx=1;*y=1,*prevy=1; //''cria'' nova peca
+	*x=0;*prevx=1;*y=0,*prevy=1; //''cria'' nova peca
 	}
 
 }
@@ -61,7 +61,7 @@ else{
 
 int loop(TipoTela tela[][25]){
 
-	int sair=0,x=1,y=1,prevx,prevy;
+	int sair=0,x=0,y=0,prevx,prevy;
 
 	inicia_ncurses();
 	inicio_tela();
@@ -84,7 +84,7 @@ int loop(TipoTela tela[][25]){
 
 		switch(pega_input()){
 			case 1: 
-				if (posicaolivre(tela[y][x-1]) && x>1)
+				if (posicaolivre(tela[y][x-1]) && x>0)
 				x--; //limitar x caso em fronteira
 				break;	
 			case 2:

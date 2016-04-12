@@ -107,7 +107,7 @@ void fim_tela(int pontos){
 	mvvline(3, 2, ACS_VLINE, 15);
 	mvvline(3,28, ACS_VLINE, 15);
 
-	move(19,3);
+	move(19,9);
 	printw("FIM DE JOGO");
 
 	getch();
