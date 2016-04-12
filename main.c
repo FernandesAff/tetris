@@ -9,13 +9,9 @@ int main () {
 	TipoTela tela[15][25];
 	int i,j;
 	
-	inicia_ncurses();
-
 	criar_tela(tela);
 	
 	loop(tela);
-
-	finaliza_ncurses();
 
 	return 0;
 }

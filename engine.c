@@ -59,11 +59,15 @@ else{
 int loop(TipoTela tela[][25]){
 
 	int sair=0,x=1,y=1,prevx,prevy;
+
+	inicia_ncurses();
+	inicio_tela();
 	cbreak();
 	noecho();
 	// incluir timeout() no futuro?
 	keypad(stdscr, TRUE);
-	tela[10][10].peca=BLOCO; // peca para teste de colisao
+	tela[10][10].peca=BLOCO;
+	tela[10][10].cor=3; // peca para teste de colisao
 
 
 	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
@@ -102,9 +106,12 @@ while (sair==0){
 			break;
 	}
 	
-	tela[prevy][prevx].peca=VAZIO; // apaga posicao antiga
+	tela[prevy][prevx].peca=VAZIO;
+	tela[prevy][prevx].cor=5; // apaga posicao antiga
 	tela[y][x].peca=BLOCO; //teste para o que seria a peca
 	}
+	fim_tela(pontuacao);
+	finaliza_ncurses();
 //pega caractere
 //opera sobre a peca
 //desenha tela

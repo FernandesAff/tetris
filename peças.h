@@ -3,4 +3,4 @@
 #include <time.h>       /* time */
 #include <ncurses.h>
 
-void gera_peca (char *p)
+void gera_peca (TipoTela *p)
