@@ -6,5 +6,7 @@ typedef struct {
 	int cor;
 } TipoTela;
 
+void inicio_tela();
 void criar_tela(TipoTela [][25]);
 void mostrar_tela(TipoTela [][25], int);
+void fim_tela(int);
