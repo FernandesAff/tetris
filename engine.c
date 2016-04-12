@@ -1,3 +1,5 @@
+#define BLOCO '0'
+#define VAZIO '-'
 #include <ncurses.h>
 #include "tela.h"
 
@@ -16,16 +18,16 @@ int pega_input(){ //corrigir para as setas
 	int input;
 	switch(getch())
 	{
-		case 'a': 
+		case KEY_LEFT: 
 			input=1;
 			break;	
-		case 's':
+		case KEY_DOWN:
 			input=2;
 			break;
-		case 'd': 
+		case KEY_RIGHT: 
 			input=3;
 			break;
-		case 'w': 
+		case KEY_UP: 
 			input=4;
 			break;
 		case 'q':
@@ -37,40 +39,41 @@ return input;
 }
 
 
-int posicaolivre(char pos){
+int posicaolivre(TipoTela pos){
 	int livre=0;
-	if (pos==' ') livre =1;
+	if (pos.peca != BLOCO) livre =1;
 	return(livre);
 }
 
-void baixo(int *x, int *y, int *prevx, int *prevy, char tela[][25]){
+void baixo(int *x, int *y, int *prevx, int *prevy, TipoTela tela[][25]){
 
-if (posicaolivre(tela[(*y)+1][*x]) && *y<14)
-*y+=1;
+if (posicaolivre(tela[(*y)+1][*x]) && *y<14) *y+=1;
 else{
-	tela[*y][*x]='0'; //fixa peca
+	tela[*y][*x].peca= BLOCO; //fixa peca
 	*x=1;*prevx=1;*y=1,*prevy=1; //''cria'' nova peca
 	}
 
 }
 
 
-int loop(char tela[][25]){
+int loop(TipoTela tela[][25]){
 
 	int sair=0,x=1,y=1,prevx,prevy;
 	cbreak();
 	noecho();
 	// incluir timeout() no futuro?
+	keypad(stdscr, TRUE);
+	tela[10][10].peca=BLOCO; // peca para teste de colisao
 
-	tela[10][10]='0'; // peca para teste de colisao
 
-	
+	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
 
 while (sair==0){
+
 	prevx=x;
 	prevy=y;	
 	
-	mostrar_tela(tela); //desenha
+	mostrar_tela(tela, pontuacao); //desenha
 
 	switch(pega_input())
 	{
@@ -99,8 +102,8 @@ while (sair==0){
 			break;
 	}
 	
-	tela[prevy][prevx]=' '; // apaga posicao antiga
-	tela[y][x]='0'; //teste para o que seria a peca
+	tela[prevy][prevx].peca=VAZIO; // apaga posicao antiga
+	tela[y][x].peca=BLOCO; //teste para o que seria a peca
 	}
 //pega caractere
 //opera sobre a peca

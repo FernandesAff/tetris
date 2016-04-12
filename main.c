@@ -6,7 +6,7 @@
 #include "engine.h"
 
 int main () {
-	char tela[15][25];
+	TipoTela tela[15][25];
 	int i,j;
 	
 	inicia_ncurses();
