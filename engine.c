@@ -49,7 +49,8 @@ void baixo(int *x, int *y, int *prevx, int *prevy, TipoTela tela[][25]){
 
 if (posicaolivre(tela[(*y)+1][*x]) && *y<14) *y+=1;
 else{
-	tela[*y][*x].peca= BLOCO; //fixa peca
+	tela[*y][*x].peca= BLOCO;
+	tela[*y][*x].cor= 4; //fixa peca
 	*x=1;*prevx=1;*y=1,*prevy=1; //''cria'' nova peca
 	}
 
@@ -72,43 +73,44 @@ int loop(TipoTela tela[][25]){
 
 	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
 
-while (sair==0){
+	while (sair==0){
 
-	prevx=x;
-	prevy=y;	
+		prevx=x;
+		prevy=y;	
 	
-	mostrar_tela(tela, pontuacao); //desenha
+		mostrar_tela(tela, pontuacao); //desenha
 
-	switch(pega_input())
-	{
-		case 1: 
-			if (posicaolivre(tela[y][x-1]) && x>1)
-			x--; //limitar x caso em fronteira
-			break;	
-		case 2:
-			/*if (posicaolivre(tela[y+1][x]) && y<14)
-			y++;
-			else{
-			tela[y][x]='0'; //fixa peca
-			x=1;prevx=1;y=1,prevy=1; //''cria'' nova peca
-			}*/
-			baixo(&x,&y,&prevx,&prevy,tela);
-			break;
-		case 3: 
-			if (posicaolivre(tela[y][x+1]) && x<24)
-			x++;
-			break;
-		case 4: 
-			if (posicaolivre(tela[y-1][x]) && y>0)
-			y--; // eliminar esta opcao
-			break;
-		case 5: sair=1;
-			break;
-	}
+		switch(pega_input()){
+			case 1: 
+				if (posicaolivre(tela[y][x-1]) && x>1)
+				x--; //limitar x caso em fronteira
+				break;	
+			case 2:
+				/*if (posicaolivre(tela[y+1][x]) && y<14)
+				y++;
+				else{
+				tela[y][x]='0'; //fixa peca
+				x=1;prevx=1;y=1,prevy=1; //''cria'' nova peca
+				}*/
+				baixo(&x,&y,&prevx,&prevy,tela);
+				break;
+			case 3: 
+				if (posicaolivre(tela[y][x+1]) && x<24)
+				x++;
+				break;
+			case 4: 
+				if (posicaolivre(tela[y-1][x]) && y>0)
+				y--; // eliminar esta opcao
+				break;
+			case 5: sair=1;
+				break;
+		}
 	
-	tela[prevy][prevx].peca=VAZIO;
-	tela[prevy][prevx].cor=5; // apaga posicao antiga
-	tela[y][x].peca=BLOCO; //teste para o que seria a peca
+		tela[prevy][prevx].peca=VAZIO;
+		tela[prevy][prevx].cor=5; // apaga posicao antiga
+		tela[y][x].peca=BLOCO;
+		tela[y][x].cor=4; //teste para o que seria a peca
+		clear();
 	}
 	fim_tela(pontuacao);
 	finaliza_ncurses();
