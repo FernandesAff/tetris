@@ -13,6 +13,7 @@ void gera_peca(TipoPeca *ponteiropeca){
 	srand (time(NULL));
 	tamanhopeca= 3+rand()%3;
 	corpeca=2+rand()%3;
+	ponteiropeca->orient=rand()%2;
 	
 	for(i=0;i<tamanhopeca;i++){ // desenha blocos
 		ponteiropeca->pecas[i].peca='0';

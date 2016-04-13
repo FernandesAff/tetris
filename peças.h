@@ -8,6 +8,7 @@ typedef struct {
 	TipoTela pecas[5];
 	int x;
 	int y;
+	int orient;
 } TipoPeca;
 
 void gera_peca (TipoPeca *); //gera peca aleatoriamente sobre um dado ponteiro TipoPeca

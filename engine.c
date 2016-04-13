@@ -9,60 +9,70 @@
 #include "peças.h"
 #include "moduloauxengine.h"
 
-
 int verifica_colisao(TipoPeca *pecatetris, TipoTela tela[][25]){
 	int i, colisao=0;
+
 	for (i=0;i<5;i++){ //verifica colisao com blocos
-		if (pecatetris->pecas[i].peca==BLOCO
-		&& 
-		tela[pecatetris->y][(pecatetris->x)+i]==BLOCO) {
+		if (pecatetris->pecas[i].peca==BLOCO && tela[pecatetris->y][(pecatetris->x)+i].peca==BLOCO) {
 			colisao=1;		
 			i=6;
 		}
 	}
-	
-	
-
-return colisao;
+	return colisao;
 }
 
 void addbloco(TipoPeca *peca,TipoTela tela[][25]){
 	int i;
-	for (i=0;i<5;i++) tela[peca->y][(peca->x)+i]=peca->pecas[i];
+
+	for (i=0;i<5;i++){
+		if(peca->orient==0){//adiciona a peca na horizontal
+			tela[peca->y][(peca->x)+i].peca=peca->pecas[i].peca;
+			tela[peca->y][(peca->x)+i].cor=peca->pecas[i].cor;
+		}
+		else{//adiciona na vertical
+			tela[(peca->y)+i][(peca->x)].peca=peca->pecas[i].peca;
+			tela[(peca->y)+i][(peca->x)].cor=peca->pecas[i].cor;
+		}
+	}	
 }
 
 void deletabloco(TipoTela *unidade){
+	
 	unidade->cor=CORFUNDO;
 	unidade->peca=VAZIO;
 }
 
 void removebloco(TipoPeca *peca,TipoTela tela[][25]){
 	int i;
+
 	for (i=0;i<5;i++) deletabloco(&tela[peca->y][(peca->x)+i]);
 }
 
 void inserebloco(TipoTela *unidade){
+	
 	unidade->cor=CORBLOCO;
 	unidade->peca=BLOCO;	
 }
 
 int verificalinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha completa
 	int i,j, completa=1;	  //se houver, retorna a posicao y dela
+
 	for(i=TAMANHOTELAY-1;i>=0;i--){
 		for (j=0;j<TAMANHOTELAX;j++){
 			if (tela[i][j].peca==VAZIO) {
 				completa=0;
 				j=100;
-				}
 			}
+		}
 		if (completa==1) return i;
 		completa=1;
-		}
+	}
 	return(-1); //caso nenhuma linha esteja completa, retorna -1
 }
 
 void deletalinhas(TipoTela tela[][TAMANHOTELAX]){ 
 	int linha=0, i;
+
 	while (linha!=-1){
 		linha=verificalinhas(tela);
 		if (linha!=-1) 
@@ -70,16 +80,16 @@ void deletalinhas(TipoTela tela[][TAMANHOTELAX]){
 	}
 }
 
-
 void fixa_e_cria_nova_peca(int *x,int *y,int *prevx,int *prevy,TipoTela tela[][TAMANHOTELAX]){ //e deleta linhas se completas
+	
 	tela[*y][*x].peca= BLOCO;
 	tela[*y][*x].cor= CORBLOCO; //fixa peca
 	*x=0;*prevx=1;*y=0,*prevy=1; //''cria'' nova peca
 	deletalinhas(tela);
 }
 
-
 void inicia_ncurses(){
+	
 	initscr();
 }
 
@@ -89,10 +99,9 @@ void finaliza_ncurses(){
 }
 
 int pega_input(){ //corrigir para as setas
-
 	int input;
-	switch(getch())
-	{
+
+	switch(getch()){
 		case KEY_LEFT: 
 			input=1;
 			break;	
@@ -109,44 +118,40 @@ int pega_input(){ //corrigir para as setas
 			input=5;
 			break;
 	}
-
-return input;
+	return input;
 }
-
 
 int posicaolivre(TipoTela pos){
 	int livre=0;
+
 	if (pos.peca != BLOCO) livre =1;
 	return(livre);
 }
 
 void baixo(int *x, int *y, int *prevx, int *prevy, TipoTela tela[][TAMANHOTELAX]){
 
+	if (posicaolivre(tela[(*y)+1][*x]) )*y+=1; 
+	else fixa_e_cria_nova_peca(x,y,prevx,prevy,tela);
 
-if (posicaolivre(tela[(*y)+1][*x]) )*y+=1; 
-else fixa_e_cria_nova_peca(x,y,prevx,prevy,tela);
-
-if (*y>=TAMANHOTELAY-1) {
-	deletabloco(&tela[*prevy][*prevx]);
-	fixa_e_cria_nova_peca(x,y,prevx,prevy,tela);
-}
-
-
-/*if (posicaolivre(tela[(*y)+1][*x]) && *y<TAMANHOTELAY-1) *y+=1;
-else{	
+	if (*y>=TAMANHOTELAY-1) {
+		deletabloco(&tela[*prevy][*prevx]);
+		fixa_e_cria_nova_peca(x,y,prevx,prevy,tela);
+	}
+	/*if (posicaolivre(tela[(*y)+1][*x]) && *y<TAMANHOTELAY-1) *y+=1;
+	else{	
 	tela[*y][*x].peca= BLOCO;
 	tela[*y][*x].cor= CORBLOCO; //fixa peca
 	*x=0;*prevx=1;*y=0,*prevy=1; //''cria'' nova peca
 	}
-*/
+	*/
 }
 
-
 int loop(TipoTela tela[][TAMANHOTELAX]){
+	int sair=0,x=0,y=0,prevx,prevy;
+	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
+	TipoPeca currentpeca, oldpeca;
 
 	criaaleatorio(tela, 3, 0.87);
-
-	int sair=0,x=0,y=0,prevx,prevy;
 
 	inicia_ncurses();
 	inicio_tela();
@@ -157,14 +162,8 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 	tela[10][10].peca=BLOCO;
 	tela[10][10].cor=CORBLOCO; // peca para teste de colisao
 
-
-	TipoPeca currentpeca, oldpeca; //delcara
 	gera_peca (&currentpeca); //cria aleatoriamente
 	addbloco(&currentpeca, tela); //aplica à matriz
-
-	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
-
-
 
 	while (sair==0){
 
@@ -206,6 +205,5 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 	fim_tela(pontuacao);
 	finaliza_ncurses();
 
-return(0);
-
+	return(0);
 }
