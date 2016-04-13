@@ -1,9 +1,54 @@
+#define TAMANHOTELAY 15
+#define TAMANHOTELAX 25
 #define CORFUNDO 5
 #define CORBLOCO 3
 #define BLOCO '0'
 #define VAZIO '-'
 #include <ncurses.h>
 #include "tela.h"
+#include "moduloauxengine.h"
+
+void deletabloco(TipoTela *unidade){
+	unidade->cor=CORFUNDO;
+	unidade->peca=VAZIO;
+}
+
+void inserebloco(TipoTela *unidade){
+	unidade->cor=CORBLOCO;
+	unidade->peca=BLOCO;	
+}
+
+int verificalinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha completa
+	int i,j, completa=1;	  //se houver, retorna a posicao y dela
+	for(i=TAMANHOTELAY-1;i>=0;i--){
+		for (j=0;j<TAMANHOTELAX-1;j++){
+			if (tela[i][j].peca==VAZIO) {
+				completa=0;
+				j=100;
+				}
+			}
+		if (completa==1) return i;
+		completa=1;
+		}
+	return(-1); //caso nenhuma linha esteja completa, retorna -1
+}
+
+void deletalinhas(TipoTela tela[][TAMANHOTELAX]){ 
+	int linha=0, i;
+	while (linha!=-1){
+		linha=verificalinhas(tela);
+		if (linha!=-1) 
+			for (i=0;i<TAMANHOTELAX;i++) deletabloco(&tela[linha][i]);
+	}
+}
+
+
+void fixa_e_cria_nova_peca(int *x,int *y,int *prevx,int *prevy,TipoTela tela[][TAMANHOTELAX]){ //e deleta linhas se completas
+	tela[*y][*x].peca= BLOCO;
+	tela[*y][*x].cor= CORBLOCO; //fixa peca
+	*x=0;*prevx=1;*y=0,*prevy=1; //''cria'' nova peca
+	deletalinhas(tela);
+}
 
 
 void inicia_ncurses(){
@@ -47,19 +92,33 @@ int posicaolivre(TipoTela pos){
 	return(livre);
 }
 
-void baixo(int *x, int *y, int *prevx, int *prevy, TipoTela tela[][25]){
+void baixo(int *x, int *y, int *prevx, int *prevy, TipoTela tela[][TAMANHOTELAX]){
 
-if (posicaolivre(tela[(*y)+1][*x]) && *y<14) *y+=1;
-else{
+
+if (posicaolivre(tela[(*y)+1][*x]) )*y+=1; 
+else fixa_e_cria_nova_peca(x,y,prevx,prevy,tela);
+
+if (*y>=TAMANHOTELAY-1) {
+	deletabloco(&tela[*prevy][*prevx]);
+	fixa_e_cria_nova_peca(x,y,prevx,prevy,tela);
+}
+
+
+
+
+/*if (posicaolivre(tela[(*y)+1][*x]) && *y<TAMANHOTELAY-1) *y+=1;
+else{	
 	tela[*y][*x].peca= BLOCO;
 	tela[*y][*x].cor= CORBLOCO; //fixa peca
 	*x=0;*prevx=1;*y=0,*prevy=1; //''cria'' nova peca
 	}
-
+*/
 }
 
 
-int loop(TipoTela tela[][25]){
+int loop(TipoTela tela[][TAMANHOTELAX]){
+
+	criaaleatorio(tela, 3, 0.87);
 
 	int sair=0,x=0,y=0,prevx,prevy;
 
@@ -88,16 +147,10 @@ int loop(TipoTela tela[][25]){
 				x--; //limitar x caso em fronteira
 				break;	
 			case 2:
-				/*if (posicaolivre(tela[y+1][x]) && y<14)
-				y++;
-				else{
-				tela[y][x]='0'; //fixa peca
-				x=1;prevx=1;y=1,prevy=1; //''cria'' nova peca
-				}*/
 				baixo(&x,&y,&prevx,&prevy,tela);
 				break;
 			case 3: 
-				if (posicaolivre(tela[y][x+1]) && x<24)
+				if (posicaolivre(tela[y][x+1]) && x<TAMANHOTELAX-1)
 				x++;
 				break;
 			case 4: 
@@ -107,18 +160,12 @@ int loop(TipoTela tela[][25]){
 			case 5: sair=1;
 				break;
 		}
-	
-		tela[prevy][prevx].peca=VAZIO;
-		tela[prevy][prevx].cor=CORFUNDO; // apaga posicao antiga
-		tela[y][x].peca=BLOCO;
-		tela[y][x].cor=CORBLOCO; //teste para o que seria a peca
+		deletabloco(&tela[prevy][prevx]); // apaga posicao antiga
+		inserebloco(&tela[y][x]); // <- teste para o que seria a peca
 		clear();
 	}
 	fim_tela(pontuacao);
 	finaliza_ncurses();
-//pega caractere
-//opera sobre a peca
-//desenha tela
 
 return(0);
 
