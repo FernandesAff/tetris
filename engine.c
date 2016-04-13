@@ -11,7 +11,7 @@
 
 
 int verifica_colisao(TipoPeca *pecatetris, TipoTela tela[][25]){
-	int i colisao=0;
+	int i, colisao=0;
 	for (i=0;i<5;i++){ //verifica colisao com blocos
 		if (pecatetris->pecas[i].peca==BLOCO 
 		&& 
