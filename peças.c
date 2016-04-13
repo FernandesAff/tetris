@@ -2,52 +2,66 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <ncurses.h>
+#include "peças.h"
 
-void gera_peca (TipoTela *p){
-	int z,y,i;	// i= contador; x= host do tamanho da peça
+void gera_peca(TipoPeca *ponteiropeca){
+	int tamanhopeca,corpeca,i;	// i= contador; x= host do tamanho da peça
+
+	ponteiropeca->x=10; //centraliza a peca
+	ponteiropeca->y=0;
 
 	srand (time(NULL));
-	z= 3+rand()%3;
-	y=2+rand()%3;
+	tamanhopeca= 3+rand()%3;
+	corpeca=2+rand()%3;
+	
+	for(i=0;i<tamanhopeca;i++){ // desenha blocos
+		ponteiropeca->pecas[i].peca='0';
+		ponteiropeca->pecas[i].cor=corpeca;
 	}
-	for(i=0;i<z;i++){
-		p[i].peca='o';
-		p[i].cor=y;
-	}
-	for(i=z;i<=5;i++){
-		p[i].peca='-';
-		p[i].cor=5;
+	for(i=tamanhopeca;i<5;i++){ //desenha espacos vazios
+		ponteiropeca->pecas[i].peca='-';
+		ponteiropeca->pecas[i].cor=5;
 	}
 
 }
 
+void move_peca_x (TipoPeca *targetpeca, int inputx){
+targetpeca->x=inputx;
+}
+
+void move_peca_y (TipoPeca *targetpeca, int inputy){
+targetpeca->y=inputy;
+}
+
+
+/*
 int main ()
 {
 	int t, sair=0, x=3, y=3;
 	char str[4];
 	
 	gera_peca(str);
-	initscr(); /* inicia ncurses */
-	cbreak(); /* recebe input sem precisar apertar <enter> */
-	noecho(); /* não mostra na tela input recebido */
-	timeout(0); /* não fica esperando por input */
-	curs_set(0); /* deixa o cursor invisivel*/
+	initscr(); // inicia ncurses 
+	cbreak(); // recebe input sem precisar apertar <enter> 
+	noecho(); // não mostra na tela input recebido 
+	timeout(0); // não fica esperando por input 
+	curs_set(0); // deixa o cursor invisivel
 	keypad(stdscr, TRUE);
 	while (sair == 0){
 		switch(getch()){
 			case KEY_LEFT: x--; break;
 			case KEY_RIGHT: x++; break;
 			case KEY_DOWN: y++; break;
-			/* "asd" controlam o cursor */
+			// "asd" controlam o cursor 
 			case 'q': sair = 1; break;
 		}
 		clear();
 		
 		mvaddstr(y, x, str);
-		/* mostra char na posicao x, y */
+		// mostra char na posicao x, y
 	}
 	endwin();
 		printf("\n");
 	
 	return 0;
-}
+} */

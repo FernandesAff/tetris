@@ -6,11 +6,39 @@
 #define VAZIO '-'
 #include <ncurses.h>
 #include "tela.h"
+#include "peças.h"
 #include "moduloauxengine.h"
+
+
+int verifica_colisao(TipoPeca *pecatetris, TipoTela tela[][25]){
+	int i colisao=0;
+	for (i=0;i<5;i++){ //verifica colisao com blocos
+		if (pecatetris->pecas[i].peca==BLOCO 
+		&& 
+		tela[pecatetris->y][(pecatetris->x)+i]==BLOCO) {
+			colisao=1;		
+			i=6;
+		}
+	}
+	
+	
+
+return colisao;
+}
+
+void addbloco(TipoPeca *peca,TipoTela tela[][25]){
+	int i;
+	for (i=0;i<5;i++) tela[peca->y][(peca->x)+i]=peca->pecas[i];
+}
 
 void deletabloco(TipoTela *unidade){
 	unidade->cor=CORFUNDO;
 	unidade->peca=VAZIO;
+}
+
+void removebloco(TipoPeca *peca,TipoTela tela[][25]){
+	int i;
+	for (i=0;i<5;i++) deletabloco(&tela[peca->y][(peca->x)+i]);
 }
 
 void inserebloco(TipoTela *unidade){
@@ -21,7 +49,7 @@ void inserebloco(TipoTela *unidade){
 int verificalinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha completa
 	int i,j, completa=1;	  //se houver, retorna a posicao y dela
 	for(i=TAMANHOTELAY-1;i>=0;i--){
-		for (j=0;j<TAMANHOTELAX-1;j++){
+		for (j=0;j<TAMANHOTELAX;j++){
 			if (tela[i][j].peca==VAZIO) {
 				completa=0;
 				j=100;
@@ -104,8 +132,6 @@ if (*y>=TAMANHOTELAY-1) {
 }
 
 
-
-
 /*if (posicaolivre(tela[(*y)+1][*x]) && *y<TAMANHOTELAY-1) *y+=1;
 else{	
 	tela[*y][*x].peca= BLOCO;
@@ -132,14 +158,22 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 	tela[10][10].cor=CORBLOCO; // peca para teste de colisao
 
 
+	TipoPeca currentpeca, oldpeca; //delcara
+	gera_peca (&currentpeca); //cria aleatoriamente
+	addbloco(&currentpeca, tela); //aplica à matriz
+
 	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
 
+
+
 	while (sair==0){
+
+		oldpeca=currentpeca;
 
 		prevx=x;
 		prevy=y;	
 	
-		mostrar_tela(tela, pontuacao); //desenha
+		mostrar_tela(tela,pontuacao); //desenha
 
 		switch(pega_input()){
 			case 1: 
@@ -160,6 +194,11 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 			case 5: sair=1;
 				break;
 		}
+		move_peca_x(&currentpeca,x+5);
+		move_peca_y(&currentpeca,y+1);
+		removebloco(&oldpeca, tela); 
+		addbloco(&currentpeca, tela); //atualiza a peca
+
 		deletabloco(&tela[prevy][prevx]); // apaga posicao antiga
 		inserebloco(&tela[y][x]); // <- teste para o que seria a peca
 		clear();
