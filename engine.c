@@ -9,87 +9,100 @@
 #include "peças.h"
 #include "moduloauxengine.h"
 
+/* A FAZER
+* deletar opcao de subir
+* deletar modulo de teste nao rigoroso, e suas funcoes aqui chamadas
+* melhorar arquitetura (boniteza)
+*/
+
 int verifica_colisao(TipoPeca *pecatetris, TipoTela tela[][25]){
-	int i, colisao=0;
 
-	for (i=0;i<5;i++){ //verifica colisao com blocos
-		if (pecatetris->pecas[i].peca==BLOCO && tela[pecatetris->y][(pecatetris->x)+i].peca==BLOCO) {
-			colisao=1;		
-			i=6;
-		}
-	}
-	return colisao;
-}
+	int i=0, colisao=0, tamanhopeca=0;
 
-void addbloco(TipoPeca *peca,TipoTela tela[][25]){
-	int i;
+		if (pecatetris->orient==0){ 
+			while(pecatetris->pecas[i].peca==BLOCO){
+				if(tela[(pecatetris->y)][(pecatetris->x)+i].peca==BLOCO) colisao=1;
+				i++;
+			}
+		}
+		else{ 
+			while(pecatetris->pecas[i].peca==BLOCO){
+				if(tela[(pecatetris->y)+i][(pecatetris->x)].peca==BLOCO) colisao=1;
+				i++;
+			}
+		}
 
-	for (i=0;i<5;i++){
-		if(peca->orient==0){//adiciona a peca na horizontal
-			tela[peca->y][(peca->x)+i].peca=peca->pecas[i].peca;
-			tela[peca->y][(peca->x)+i].cor=peca->pecas[i].cor;
-		}
-		else{//adiciona na vertical
-			tela[(peca->y)+i][(peca->x)].peca=peca->pecas[i].peca;
-			tela[(peca->y)+i][(peca->x)].cor=peca->pecas[i].cor;
-		}
-	}	
+		
+return colisao;
 }
 
 void deletabloco(TipoTela *unidade){
-	
 	unidade->cor=CORFUNDO;
 	unidade->peca=VAZIO;
 }
 
+void addbloco(TipoPeca *peca,TipoTela tela[][25]){
+	int i;
+	if (peca->orient==0)	
+	for (i=0;i<5;i++) {if (peca->pecas[i].peca==BLOCO) tela[peca->y][(peca->x)+i]=peca->pecas[i];}
+	else 
+	for (i=0;i<5;i++){if (peca->pecas[i].peca==BLOCO) tela[peca->y +i][(peca->x)]=peca->pecas[i];}
+}
+
 void removebloco(TipoPeca *peca,TipoTela tela[][25]){
 	int i;
-
-	for (i=0;i<5;i++) deletabloco(&tela[peca->y][(peca->x)+i]);
+	if (peca->orient==0)	
+	for (i=0;i<5;i++) {if (peca->pecas[i].peca==BLOCO) deletabloco(&tela[peca->y][(peca->x)+i]);}
+	else 
+	for (i=0;i<5;i++) {if (peca->pecas[i].peca==BLOCO) deletabloco(&tela[(peca->y)+i][peca->x]);}
 }
 
 void inserebloco(TipoTela *unidade){
-	
 	unidade->cor=CORBLOCO;
 	unidade->peca=BLOCO;	
 }
 
 int verificalinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha completa
 	int i,j, completa=1;	  //se houver, retorna a posicao y dela
-
 	for(i=TAMANHOTELAY-1;i>=0;i--){
 		for (j=0;j<TAMANHOTELAX;j++){
 			if (tela[i][j].peca==VAZIO) {
 				completa=0;
 				j=100;
+				}
 			}
-		}
 		if (completa==1) return i;
 		completa=1;
-	}
+		}
 	return(-1); //caso nenhuma linha esteja completa, retorna -1
 }
 
-void deletalinhas(TipoTela tela[][TAMANHOTELAX]){ 
-	int linha=0, i;
+void gravidade(TipoTela tela[][TAMANHOTELAX],int posicaolinha){
+	int j;
+	for(;posicaolinha>0;posicaolinha--){
+		for (j=0;j<TAMANHOTELAX;j++){
+			tela[posicaolinha][j]=tela[posicaolinha-1][j];
+			}
+		}
+}	
 
+void deletalinhas(TipoTela tela[][TAMANHOTELAX],int *pontuacao){ 
+	int linha=0, i;
 	while (linha!=-1){
 		linha=verificalinhas(tela);
-		if (linha!=-1) 
-			for (i=0;i<TAMANHOTELAX;i++) deletabloco(&tela[linha][i]);
+		if (linha!=-1) {
+			gravidade(tela, linha);
+//			for (i=0;i<TAMANHOTELAX;i++) deletabloco(&tela[linha][i]);
+			*pontuacao+=100;
+			}
 	}
+//	gravidade(tela, linha);
 }
 
-void fixa_e_cria_nova_peca(int *x,int *y,int *prevx,int *prevy,TipoTela tela[][TAMANHOTELAX]){ //e deleta linhas se completas
-	
-	tela[*y][*x].peca= BLOCO;
-	tela[*y][*x].cor= CORBLOCO; //fixa peca
-	*x=0;*prevx=1;*y=0,*prevy=1; //''cria'' nova peca
-	deletalinhas(tela);
-}
+
+
 
 void inicia_ncurses(){
-	
 	initscr();
 }
 
@@ -99,9 +112,10 @@ void finaliza_ncurses(){
 }
 
 int pega_input(){ //corrigir para as setas
-	int input;
 
-	switch(getch()){
+	int input;
+	switch(getch())
+	{
 		case KEY_LEFT: 
 			input=1;
 			break;	
@@ -118,40 +132,28 @@ int pega_input(){ //corrigir para as setas
 			input=5;
 			break;
 	}
-	return input;
+
+return input;
 }
+
 
 int posicaolivre(TipoTela pos){
 	int livre=0;
-
 	if (pos.peca != BLOCO) livre =1;
 	return(livre);
 }
 
-void baixo(int *x, int *y, int *prevx, int *prevy, TipoTela tela[][TAMANHOTELAX]){
-
-	if (posicaolivre(tela[(*y)+1][*x]) )*y+=1; 
-	else fixa_e_cria_nova_peca(x,y,prevx,prevy,tela);
-
-	if (*y>=TAMANHOTELAY-1) {
-		deletabloco(&tela[*prevy][*prevx]);
-		fixa_e_cria_nova_peca(x,y,prevx,prevy,tela);
-	}
-	/*if (posicaolivre(tela[(*y)+1][*x]) && *y<TAMANHOTELAY-1) *y+=1;
-	else{	
-	tela[*y][*x].peca= BLOCO;
-	tela[*y][*x].cor= CORBLOCO; //fixa peca
-	*x=0;*prevx=1;*y=0,*prevy=1; //''cria'' nova peca
-	}
-	*/
+int tamanho_peca(TipoPeca pecatetris){
+int tamanho=0;
+	while (pecatetris.pecas[tamanho].peca==BLOCO) tamanho++; 
+return tamanho;
 }
 
 int loop(TipoTela tela[][TAMANHOTELAX]){
-	int sair=0,x=0,y=0,prevx,prevy;
-	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
-	TipoPeca currentpeca, oldpeca;
 
-	criaaleatorio(tela, 3, 0.87);
+	criaaleatorio(tela, 2, 0.6);
+
+	int sair=0,x=10,y=0,prevx,prevy, tamanhopeca=0, colisaovertical=0;
 
 	inicia_ncurses();
 	inicio_tela();
@@ -159,14 +161,18 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 	noecho();
 	// incluir timeout() no futuro?
 	keypad(stdscr, TRUE);
-	tela[10][10].peca=BLOCO;
-	tela[10][10].cor=CORBLOCO; // peca para teste de colisao
 
+	TipoPeca currentpeca, oldpeca; //delcara
 	gera_peca (&currentpeca); //cria aleatoriamente
 	addbloco(&currentpeca, tela); //aplica à matriz
+	tamanhopeca=tamanho_peca(currentpeca);
+	//while (currentpeca.pecas[tamanhopeca].peca==BLOCO) tamanhopeca++; // calcula tamanho da peca
+
+	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
+
+
 
 	while (sair==0){
-
 		oldpeca=currentpeca;
 
 		prevx=x;
@@ -175,35 +181,79 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 		mostrar_tela(tela,pontuacao); //desenha
 
 		switch(pega_input()){
-			case 1: 
-				if (posicaolivre(tela[y][x-1]) && x>0)
-				x--; //limitar x caso em fronteira
-				break;	
-			case 2:
-				baixo(&x,&y,&prevx,&prevy,tela);
+			case 1: if (x>0)
+				x--;
 				break;
+
+			case 2: 
+				if (currentpeca.orient==1){
+					if (y<TAMANHOTELAY-tamanhopeca)
+					y++;
+					else colisaovertical=1;
+					}
+				else {
+					if (y<TAMANHOTELAY-1)
+					y++;
+					else colisaovertical=1;
+					}
+				break;
+
 			case 3: 
-				if (posicaolivre(tela[y][x+1]) && x<TAMANHOTELAX-1)
-				x++;
+				if (currentpeca.orient==0){
+					if (x<TAMANHOTELAX-tamanhopeca)
+					x++;
+					}
+				else  if (x<TAMANHOTELAX-1) x++;
 				break;
-			case 4: 
-				if (posicaolivre(tela[y-1][x]) && y>0)
-				y--; // eliminar esta opcao
-				break;
+
+/*			case 4: if (y>0) opcao de teste para subir
+*				y--;
+*				break;
+*/
 			case 5: sair=1;
 				break;
 		}
-		move_peca_x(&currentpeca,x+5);
-		move_peca_y(&currentpeca,y+1);
-		removebloco(&oldpeca, tela); 
-		addbloco(&currentpeca, tela); //atualiza a peca
+		
+		removebloco(&currentpeca,tela); //apaga peca do tetris da matriz tela
+		move_peca_x(&currentpeca,x);    // atribui as propriedades de posicao
+		move_peca_y(&currentpeca,y);
 
-		deletabloco(&tela[prevy][prevx]); // apaga posicao antiga
-		inserebloco(&tela[y][x]); // <- teste para o que seria a peca
+		if (!verifica_colisao(&currentpeca,tela)){ //verifica se o estado de posicao ja esta ocupado com alguma peca da matriz
+			removebloco(&oldpeca, tela); //caso esteja vago, remove peca antiga
+			addbloco(&currentpeca, tela); //e atualiza a peca
+			}
+		else{    //caso nao esteja vago
+			x=prevx; //retorna a posicao x anterior, impedindo as sobreposicoes
+			if (y!=prevy) { //significa que houve uma colisao no eixo y
+				y=prevy;
+				colisaovertical=1; //flag para fixar a peca e tomar as medidas necessarias
+				}
+			}
+			// ou seja, caso haja uma colisao no eixo y
+			move_peca_x(&currentpeca,x); //atribui posicoes anteriores
+			move_peca_y(&currentpeca,y); 
+			addbloco(&currentpeca, tela); //desenha na matriz tela
+		if (colisaovertical) {
+			gera_peca (&currentpeca); //cria aleatoriamente
+			tamanhopeca=tamanho_peca(currentpeca);
+			x=currentpeca.x; y=currentpeca.y;
+			deletalinhas(tela, &pontuacao); //verifica se alguma linha foi completada
+			if (verifica_colisao(&currentpeca,tela)) sair=1;
+			addbloco(&currentpeca, tela); //desenha a peca nova na matriz tela		
+			}
+		colisaovertical=0;
+		
+
+		if (sair==1) { //mostra o tragico momento de derrota 
+			for(x=0;x<TAMANHOTELAX;x++) for(y=0;y<TAMANHOTELAY;y++) if(tela[y][x].peca==BLOCO)tela[y][x].cor=4 ; //vermelho dramatico
+			mostrar_tela(tela,pontuacao); //desenha a tela, pela ultima vez :(
+			getch();  		      // e o ultimo instante, para repensar e lastimar junto aos arrependimentos
+			}
 		clear();
 	}
-	fim_tela(pontuacao);
+ 	fim_tela(pontuacao); //a vida eh mesmo curta...
 	finaliza_ncurses();
 
-	return(0);
+return(0);
+
 }
