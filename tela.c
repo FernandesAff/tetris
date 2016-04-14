@@ -62,10 +62,10 @@ void mostrar_tela(TipoTela tela[][25], int pontos){
 
 	move(1,3);
 	printw("Pontuação:%d", pontos);
-	mvaddch(7, 0, '=');
-	mvaddch(7, 1, ACS_RARROW);
-	mvaddch(7, 29, ACS_LARROW);
-	mvaddch(7, 30, '=');
+	mvaddch(8, 0, '=');
+	mvaddch(8, 1, ACS_RARROW);
+	mvaddch(8, 29, ACS_LARROW);
+	mvaddch(8, 30, '=');
 	
 	mvaddch(2, 2, ACS_ULCORNER);
 	mvaddch(2, 28, ACS_URCORNER);
