@@ -17,7 +17,7 @@
 
 int verificamorte(TipoTela tela[][25]){
 	int i;
-	for (i=0; i<TAMANHOTELAX;i++){
+	for (i=0; i<TAMANHOTELAX-1;i++){
 		if (tela[5][i].peca==BLOCO){
 		return(1);
 		}
