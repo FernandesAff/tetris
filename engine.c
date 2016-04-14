@@ -15,6 +15,16 @@
 * melhorar arquitetura (boniteza)
 */
 
+int verificamorte(TipoTela tela[][25]){
+	int i;
+	for (i=0; i<TAMANHOTELAX;i++){
+		if (tela[5][i].peca==BLOCO){
+		return(1);
+		}
+	}
+return(0);
+}
+
 int verifica_colisao(TipoPeca *pecatetris, TipoTela tela[][25]){
 
 	int i=0, colisao=0, tamanhopeca=0;
@@ -233,12 +243,14 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 			move_peca_x(&currentpeca,x); //atribui posicoes anteriores
 			move_peca_y(&currentpeca,y); 
 			addbloco(&currentpeca, tela); //desenha na matriz tela
+
 		if (colisaovertical) {
+			if (verificamorte(tela)) sair=1;//morre se ha algum bloco na posicao y=5 <------------------
 			gera_peca (&currentpeca); //cria aleatoriamente
 			tamanhopeca=tamanho_peca(currentpeca);
 			x=currentpeca.x; y=currentpeca.y;
 			deletalinhas(tela, &pontuacao); //verifica se alguma linha foi completada
-			if (verifica_colisao(&currentpeca,tela)) sair=1;
+			//if (verifica_colisao(&currentpeca,tela)) sair=1; //game over se a peca nova se sobrepoe a alguma peca (n especificado)
 			addbloco(&currentpeca, tela); //desenha a peca nova na matriz tela		
 			}
 		colisaovertical=0;
