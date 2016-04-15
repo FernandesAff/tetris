@@ -12,10 +12,12 @@ void inicio_tela(){
 	init_pair(2,COLOR_BLACK,COLOR_WHITE);
 	init_pair(3,COLOR_GREEN,COLOR_WHITE);
 	init_pair(4,COLOR_RED,COLOR_WHITE);
-	init_pair(5,COLOR_WHITE,COLOR_WHITE);
-	init_pair(6,COLOR_RED,COLOR_BLACK);
+	init_pair(5,COLOR_CYAN,COLOR_WHITE);
+	init_pair(6,COLOR_YELLOW,COLOR_WHITE);
+	init_pair(7,COLOR_WHITE,COLOR_WHITE);
+	init_pair(8,COLOR_RED,COLOR_BLACK);
 
-	bkgd(COLOR_PAIR(6));
+	bkgd(COLOR_PAIR(8));
 
 	move(1,13);
 	printw("TETRIS");
@@ -50,7 +52,7 @@ void criar_tela(TipoTela tela[][25]){
 	for(i=0;i<15;i++){
 		for(j=0;j<25;j++){
 			tela[i][j].peca='-';
-			tela[i][j].cor=5;
+			tela[i][j].cor=7;
 		}
 	}	
 }
@@ -87,7 +89,7 @@ void mostrar_tela(TipoTela tela[][25], int pontos){
 
 void fim_tela(int pontos){
 	int i, j;
-	bkgd(COLOR_PAIR(6));
+	bkgd(COLOR_PAIR(8));
 
 	move(1,3);
 	printw("Pontuação:%d", pontos);

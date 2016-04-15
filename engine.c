@@ -1,7 +1,6 @@
 #define TAMANHOTELAY 15
 #define TAMANHOTELAX 25
-#define CORFUNDO 5
-#define CORBLOCO 3
+#define CORFUNDO 7
 #define BLOCO '0'
 #define VAZIO '-'
 #include <ncurses.h>
@@ -22,7 +21,7 @@ int verificamorte(TipoTela tela[][25]){
 		return(1);
 		}
 	}
-return(0);
+	return(0);
 }
 
 int verifica_colisao(TipoPeca *pecatetris, TipoTela tela[][25]){
@@ -40,10 +39,8 @@ int verifica_colisao(TipoPeca *pecatetris, TipoTela tela[][25]){
 				if(tela[(pecatetris->y)+i][(pecatetris->x)].peca==BLOCO) colisao=1;
 				i++;
 			}
-		}
-
-		
-return colisao;
+		}	
+	return colisao;
 }
 
 void deletabloco(TipoTela *unidade){
@@ -53,10 +50,18 @@ void deletabloco(TipoTela *unidade){
 
 void addbloco(TipoPeca *peca,TipoTela tela[][25]){
 	int i;
-	if (peca->orient==0)	
-	for (i=0;i<5;i++) {if (peca->pecas[i].peca==BLOCO) tela[peca->y][(peca->x)+i]=peca->pecas[i];}
-	else 
-	for (i=0;i<5;i++){if (peca->pecas[i].peca==BLOCO) tela[peca->y +i][(peca->x)]=peca->pecas[i];}
+	if (peca->orient==0){	
+		for (i=0;i<5;i++) {
+			if (peca->pecas[i].peca==BLOCO){
+			tela[peca->y][(peca->x)+i]=peca->pecas[i];
+			}
+		}
+	}	
+	else{
+		for (i=0;i<5;i++){
+			if (peca->pecas[i].peca==BLOCO) tela[peca->y +i][(peca->x)]=peca->pecas[i];
+		}
+	}
 }
 
 void removebloco(TipoPeca *peca,TipoTela tela[][25]){
@@ -65,11 +70,6 @@ void removebloco(TipoPeca *peca,TipoTela tela[][25]){
 	for (i=0;i<5;i++) {if (peca->pecas[i].peca==BLOCO) deletabloco(&tela[peca->y][(peca->x)+i]);}
 	else 
 	for (i=0;i<5;i++) {if (peca->pecas[i].peca==BLOCO) deletabloco(&tela[(peca->y)+i][peca->x]);}
-}
-
-void inserebloco(TipoTela *unidade){
-	unidade->cor=CORBLOCO;
-	unidade->peca=BLOCO;	
 }
 
 int verificalinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha completa
@@ -102,22 +102,18 @@ void deletalinhas(TipoTela tela[][TAMANHOTELAX],int *pontuacao){
 		linha=verificalinhas(tela);
 		if (linha!=-1) {
 			gravidade(tela, linha);
-//			for (i=0;i<TAMANHOTELAX;i++) deletabloco(&tela[linha][i]);
+		//				for (i=0;i<TAMANHOTELAX;i++) deletabloco(&tela[linha][i]);
 			*pontuacao+=100;
 			}
 	}
-//	gravidade(tela, linha);
+		//	gravidade(tela, linha);
 }
-
-
-
 
 void inicia_ncurses(){
 	initscr();
 }
 
 void finaliza_ncurses(){
-
 	endwin();
 }
 
@@ -142,8 +138,7 @@ int pega_input(){ //corrigir para as setas
 			input=5;
 			break;
 	}
-
-return input;
+	return input;
 }
 
 
@@ -154,33 +149,28 @@ int posicaolivre(TipoTela pos){
 }
 
 int tamanho_peca(TipoPeca pecatetris){
-int tamanho=0;
+	int tamanho=0;
+	
 	while (pecatetris.pecas[tamanho].peca==BLOCO) tamanho++; 
-return tamanho;
+	return tamanho;
 }
 
 int loop(TipoTela tela[][TAMANHOTELAX]){
+	int sair=0,x=10,y=0,prevx,prevy, tamanhopeca=0, colisaovertical=0, pontuacao=0,corpeca=2;
+	TipoPeca currentpeca, oldpeca;
 
 	criaaleatorio(tela, 2, 0.6);
-
-	int sair=0,x=10,y=0,prevx,prevy, tamanhopeca=0, colisaovertical=0;
 
 	inicia_ncurses();
 	inicio_tela();
 	cbreak();
 	noecho();
-	// incluir timeout() no futuro?
 	keypad(stdscr, TRUE);
 
-	TipoPeca currentpeca, oldpeca; //delcara
-	gera_peca (&currentpeca); //cria aleatoriamente
+	gera_peca (&currentpeca,&corpeca); //cria aleatoriamente
 	addbloco(&currentpeca, tela); //aplica à matriz
 	tamanhopeca=tamanho_peca(currentpeca);
 	//while (currentpeca.pecas[tamanhopeca].peca==BLOCO) tamanhopeca++; // calcula tamanho da peca
-
-	int pontuacao = 0 ;// decidir o que fazer quanto a isso	
-
-
 
 	while (sair==0){
 		oldpeca=currentpeca;
@@ -246,7 +236,7 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 
 		if (colisaovertical) {
 			if (verificamorte(tela)) sair=1;//morre se ha algum bloco na posicao y=5 <------------------
-			gera_peca (&currentpeca); //cria aleatoriamente
+			gera_peca (&currentpeca, &corpeca); //cria aleatoriamente
 			tamanhopeca=tamanho_peca(currentpeca);
 			x=currentpeca.x; y=currentpeca.y;
 			deletalinhas(tela, &pontuacao); //verifica se alguma linha foi completada

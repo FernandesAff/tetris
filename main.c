@@ -7,7 +7,6 @@
 
 int main () {
 	TipoTela tela[15][25];
-	int i,j;
 	
 	criar_tela(tela);
 	

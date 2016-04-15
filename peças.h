@@ -11,6 +11,6 @@ typedef struct {
 	int orient;
 } TipoPeca;
 
-void gera_peca (TipoPeca *); //gera peca aleatoriamente sobre um dado ponteiro TipoPeca
+void gera_peca (TipoPeca *, int *); //gera peca aleatoriamente sobre um dado ponteiro TipoPeca
 void move_peca_x (TipoPeca *, int);
 void move_peca_y (TipoPeca *, int);
