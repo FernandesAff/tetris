@@ -4,7 +4,7 @@ programa:main.o tela.o engine.o moduloauxengine.o peças.o
 	gcc main.o tela.o engine.o moduloauxengine.o peças.o -o programa -lncurses
 
 teste:teste.o tela.o engine.o moduloauxengine.o peças.o
-	gcc -Wall -ftest-coverage -fprofile-arcs -I./CUnit -L./CUnit teste.o tela.o engine.o moduloauxengine.o peças.o -lncurses -lcunit -o teste_gcov	
+	gcc -Wall -ftest-coverage -fprofile-arcs -I./CUnit -L./CUnit teste.o tela.o engine.o moduloauxengine.o peças.o -lncurses -lcunit -o teste	
 
 main.o: main.c tela.c tela.h engine.c engine.h peças.c peças.h moduloauxengine.c moduloauxengine.h
 	gcc -c main.c 	
