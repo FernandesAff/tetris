@@ -1,7 +1,27 @@
+#define BLOCO '0'
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
 #include "tela.h"
+
+
+void set_peca_cor(TipoTela* peca_dada, int cor_aferida){
+	peca_dada->cor = cor_aferida;
+}
+
+void set_peca_caractere(TipoTela* peca_dada,char caractere_aferido){
+	peca_dada->peca = caractere_aferido;
+};
+
+void set_peca(TipoTela *peca_dada, char caractere_aferido, int cor_aferida){
+	set_peca_caractere(peca_dada,caractere_aferido);
+	set_peca_cor(peca_dada,cor_aferida);	
+}
+
+int verifica_se_bloco(TipoTela peca_dada){
+	if (peca_dada.peca==BLOCO) return 1;
+	else return 0;
+}
 
 void inicio_tela(){
 	int i,j;

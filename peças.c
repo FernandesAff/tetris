@@ -3,6 +3,15 @@
 #include <time.h>       /* time */
 #include <ncurses.h>
 #include "peças.h"
+#include "tela.h"
+
+int get_tamanho(TipoPeca pecatetris){
+	int tamanho=0;
+	
+	while (verifica_se_bloco(pecatetris.pecas[tamanho])) tamanho++; 
+	return tamanho;
+return tamanho;}
+
 
 void gera_peca(TipoPeca *ponteiropeca, int *corpeca){
 	int tamanhopeca,i;	// i= contador; x= host do tamanho da peça
@@ -21,14 +30,12 @@ void gera_peca(TipoPeca *ponteiropeca, int *corpeca){
 	tamanhopeca= 3+rand()%3;
 	ponteiropeca->orient=rand()%2;
 	
-	for(i=0;i<tamanhopeca;i++){ // desenha blocos
-		ponteiropeca->pecas[i].peca='0';
-		ponteiropeca->pecas[i].cor=*corpeca;
-	}
-	for(i=tamanhopeca;i<5;i++){ //desenha espacos vazios
-		ponteiropeca->pecas[i].peca='-';
-		ponteiropeca->pecas[i].cor=7;
-	}
+	for(i=0;i<tamanhopeca;i++) // desenha blocos
+		set_peca(&(ponteiropeca->pecas[i]),'0',*corpeca);
+
+	for(i=tamanhopeca;i<5;i++) //desenha espacos vazios
+		set_peca(&(ponteiropeca->pecas[i]),'-',7);
+	
 
 }
 
