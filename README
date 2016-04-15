@@ -1,0 +1,7 @@
+Para a compilação o programa basta digitar "make" no terminal e o makefile produzirá dois arquivos executáveis.
+Para executar o jogo abra o terminal na pasta onde está os arquivos do jogo e digite ./programa
+Para executar o programa de testes digite ./teste , ele apresentará os testes executados pelo CUnit e os resultados. 
+Lembre-se de ter versão correta da biblioteca do CUnit na pasta contendo os arquivos do jogo, será enviada uma pasta com a biblioteca para computadores 64bits.
+Todos os testes foram executados em computadores com Ubuntu 15.10 versão 64 bits
+
+Todo o projeto está disponível no seguinte link do GitHub: https://github.com/FernandesAff/tetris.git
