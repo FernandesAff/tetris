@@ -1,3 +1,6 @@
+#ifndef PECAS_H
+#define PECAS_H
+
 #include <stdio.h>      /* printf, NULL */
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
@@ -15,3 +18,5 @@ void gera_peca (TipoPeca *, int *); //gera peca aleatoriamente sobre um dado pon
 void move_peca_x (TipoPeca *, int);
 void move_peca_y (TipoPeca *, int);
 int get_tamanho(TipoPeca);
+
+#endif

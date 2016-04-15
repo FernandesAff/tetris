@@ -9,14 +9,9 @@
 #include "peças.h"
 #include "moduloauxengine.h"
 
-/* A FAZER:
-* deletar opcao de subir
-* deletar modulo de teste nao rigoroso, e suas funcoes aqui chamadas
-* melhorar arquitetura (boniteza)
-*/
-
 int verificamorte(TipoTela tela[][25]){
 	int i;
+	
 	for (i=0; i<TAMANHOTELAX-1;i++){
 		if (verifica_se_bloco(tela[5][i]))
 		return(1);
@@ -25,7 +20,6 @@ int verificamorte(TipoTela tela[][25]){
 }
 
 int verifica_colisao(TipoPeca *pecatetris, TipoTela tela[][25]){
-
 	int i=0, colisao=0, tamanhopeca=0;
 
 		if (pecatetris->orient==0){ 
@@ -49,6 +43,7 @@ void deletabloco(TipoTela *unidade){
 
 void addbloco(TipoPeca *peca,TipoTela tela[][25]){
 	int i;
+	
 	if (peca->orient==0){	
 		for (i=0;i<5;i++) {
 			if (verifica_se_bloco(peca->pecas[i])){
@@ -65,62 +60,65 @@ void addbloco(TipoPeca *peca,TipoTela tela[][25]){
 
 void removebloco(TipoPeca *peca,TipoTela tela[][25]){
 	int i;
-	if (peca->orient==0)	
-	for (i=0;i<5;i++) {if (verifica_se_bloco(peca->pecas[i])) deletabloco(&tela[peca->y][(peca->x)+i]);}
-	else 
-	for (i=0;i<5;i++) {if (verifica_se_bloco(peca->pecas[i])) deletabloco(&tela[(peca->y)+i][peca->x]);}
+	
+	if (peca->orient==0){
+		for (i=0;i<5;i++) {
+			if (verifica_se_bloco(peca->pecas[i])){
+				deletabloco(&tela[peca->y][(peca->x)+i]);
+			}	
+		}
+	}	
+	else{
+		for (i=0;i<5;i++) {
+			if (verifica_se_bloco(peca->pecas[i])){
+				deletabloco(&tela[(peca->y)+i][peca->x]);
+			}
+		}
+	}	
 }
 
 int verificalinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha completa
 	int i,j, completa=1;	  //se houver, retorna a posicao y dela
+	
 	for(i=TAMANHOTELAY-1;i>=0;i--){
 		for (j=0;j<TAMANHOTELAX;j++){
 			if (!verifica_se_bloco(tela[i][j])) {
 				completa=0;
 				j=100;
-				}
 			}
+		}
 		if (completa==1) return i;
 		completa=1;
-		}
+	}
 	return(-1); //caso nenhuma linha esteja completa, retorna -1
 }
 
 void gravidade(TipoTela tela[][TAMANHOTELAX],int posicaolinha){
 	int j;
+	
 	for(;posicaolinha>0;posicaolinha--){
 		for (j=0;j<TAMANHOTELAX;j++){
 			tela[posicaolinha][j]=tela[posicaolinha-1][j];
-			}
 		}
+	}
 }	
 
 void deletalinhas(TipoTela tela[][TAMANHOTELAX],int *pontuacao){ 
 	int linha=0, i;
+	
 	while (linha!=-1){
 		linha=verificalinhas(tela);
 		if (linha!=-1) {
 			gravidade(tela, linha);
-		//				for (i=0;i<TAMANHOTELAX;i++) deletabloco(&tela[linha][i]);
 			*pontuacao+=100;
-			}
+		}
 	}
-		//	gravidade(tela, linha);
-}
-
-void inicia_ncurses(){
-	initscr();
-}
-
-void finaliza_ncurses(){
-	endwin();
 }
 
 int pega_input(){ //corrigir para as setas
-
 	int input;
-	switch(getch())
-	{
+	
+	switch(getch()){
 		case KEY_LEFT: 
 			input=1;
 			break;	
@@ -147,7 +145,7 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 
 	criaaleatorio(tela, 2, 0.6);
 
-	inicia_ncurses();
+	initscr();
 	inicio_tela();
 	cbreak();
 	noecho();
@@ -243,7 +241,7 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 		clear();
 	}
  	fim_tela(pontuacao); //a vida eh mesmo curta...
-	finaliza_ncurses();
+	endwin();
 
 return(0);
 
