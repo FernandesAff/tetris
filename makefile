@@ -1,15 +1,15 @@
 all: programa teste limpa
 
-programa:main.o tela.o engine.o moduloauxengine.o peças.o
-	gcc main.o tela.o engine.o moduloauxengine.o peças.o -o programa -lncurses
+programa:main.o tela.o engine.o  peças.o
+	gcc main.o tela.o engine.o peças.o -o programa -lncurses
 
-teste:teste.o tela.o engine.o moduloauxengine.o peças.o
-	gcc -Wall -ftest-coverage -fprofile-arcs -I./CUnit -L./CUnit teste.o tela.o engine.o moduloauxengine.o peças.o -lncurses -lcunit -o teste	
+teste:teste.o tela.o engine.o peças.o
+	gcc -Wall -ftest-coverage -fprofile-arcs -I./CUnit -L./CUnit teste.o tela.o engine.o peças.o -lncurses -lcunit -o teste_gcov	
 
-main.o: main.c tela.c tela.h engine.c engine.h peças.c peças.h moduloauxengine.c moduloauxengine.h
+main.o: main.c tela.c tela.h engine.c engine.h peças.c peças.h
 	gcc -c main.c 	
 
-teste.o: teste.c tela.c engine.c moduloauxengine.c peças.c
+teste.o: teste.c tela.c engine.c peças.c
 	gcc -c teste.c
 
 tela.o: tela.c tela.h
@@ -17,9 +17,6 @@ tela.o: tela.c tela.h
 
 peças.o: peças.h peças.c
 	gcc -c peças.c
-
-moduloauxengine.o: moduloauxengine.c moduloauxengine.h
-	gcc -c moduloauxengine.c
 
 engine.o: engine.c engine.h
 	gcc -c engine.c	
