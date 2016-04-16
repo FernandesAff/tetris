@@ -8,6 +8,25 @@
 #include "engine.h"
 #include "peças.h"
 
+//testes do modulo tela
+
+void teste_tela_vazia(void){
+	TipoTela tela[15][25];
+	int resultado=0, i, j;
+
+	criar_tela(tela);
+
+	for(i=0;i<15;i++){
+		for(j=0;j<25;j++){
+			if(tela[i][j].peca!='-' || tela[i][j].cor!=7){
+				resultado=1;
+			}
+		}
+	}
+	CU_ASSERT_FALSE(resultado);	
+}
+
+//testes do modulo pecas
 void teste_corpeca_corfundo (void){
 	TipoPeca peca;
 	int resultado=0, cores=2, i;
@@ -34,6 +53,20 @@ void teste_corpeca_diferente (void){
 	CU_ASSERT_TRUE(resultado);	
 }
 
+void testa_tamanho(void){
+	TipoPeca peca;
+	int resultado=0, tam, cor=2;
+
+	gera_peca(&peca, &cor);
+	tam=get_tamanho(peca);
+
+	if (tam>=3 && tam<=5){
+		resultado=1;
+	}
+	CU_ASSERT_TRUE(resultado);
+}
+
+//testes do modulo engine
 void teste_limpa_linha(void){
 	TipoTela tela[15][25];
 	int resultado=0, i,j,pont=0;
@@ -53,32 +86,33 @@ void teste_limpa_linha(void){
 			}
 		}	
 	}
-
 	CU_ASSERT_FALSE(resultado);	
 }
 
-void testa_tamanho(void){
-	TipoPeca peca;
-	int resultado=0, tam, cor=2;
+void teste_perdeu(void){
+	TipoTela tela[15][25];
+	int resultado;
 
-	gera_peca(&peca, &cor);
-	tam=get_tamanho(peca);
+	tela[5][12].peca='0';
+	tela[5][12].cor=5;
 
-	if (tam>=3 && tam<=5){
-		resultado=1;
-	}
-	CU_ASSERT_TRUE(resultado);
+	resultado=verificamorte(tela);
+	printf("%d\n", resultado);
+
+	CU_ASSERT_TRUE(resultado);	
 }
 
 void  adicionar_suite(void){
 	CU_pSuite suite;
 	
-	suite = CU_add_suite("Testes de datas e nomes",NULL,NULL);
+	suite = CU_add_suite("Testes de funcionamento",NULL,NULL);
 	
+	CU_ADD_TEST(suite, teste_tela_vazia);
 	CU_ADD_TEST(suite, teste_corpeca_corfundo);
 	CU_ADD_TEST(suite, teste_corpeca_diferente);
-	CU_ADD_TEST(suite, teste_limpa_linha);
 	CU_ADD_TEST(suite, testa_tamanho);
+	CU_ADD_TEST(suite, teste_limpa_linha);
+	CU_ADD_TEST(suite, teste_perdeu);
 }
 
 int main(){
