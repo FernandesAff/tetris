@@ -7,7 +7,7 @@
 #include <ncurses.h>
 #include "tela.h"
 #include "peças.h"
-#include "moduloauxengine.h"
+//#include "moduloauxengine.h" nao disponivel ao usuario
 
 int verificamorte(TipoTela tela[][25]){
 	int i;
@@ -143,7 +143,7 @@ int loop(TipoTela tela[][TAMANHOTELAX]){
 	int sair=0,x=10,y=0,prevx,prevy, tamanhopeca=0, colisaovertical=0, pontuacao=0,corpeca=2;
 	TipoPeca currentpeca, oldpeca;
 
-	criaaleatorio(tela, 2, 0.6);
+	//criaaleatorio(tela, 2, 0.6);
 
 	initscr();
 	inicio_tela();
