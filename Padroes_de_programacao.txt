@@ -1,0 +1,35 @@
+Este arquivo contém os padrões de programação que devem ser adotados na implementação deste projeto. Consta aqui somente o padrão a ser adotado para unificar o código e colaborar para a coesão. cabe a cada programador adotar as boas práticas gerais de programação, aqui não especificadas.  
+
+letras:
+- por motivos de formatacão, serão adotados somente letras presentes na lingua inglesa.
+caracteres acentuados ou "ç" não devem ser usados.
+- palavras que contenham a letra "ç" devem ter essa letra substituida por "c".
+
+módulos:
+- os nomes dos módulos serão, sempre que possível, substantivos.
+- o nome de cada módulos deve começar por letra MAIÚSCULA.
+- cada palavra do titulo do modulo deve apresentar a primeira letra MAIÚSCULA.
+ex: ContaBancaria, 
+
+funções:
+- os nomes das funcões devem ser, sempre que possível, verbos.
+- a primeira letra de uma funcao deve ser MAIÚSCULA.
+- as seguintes palavras contidas devem ter a primeira letra MAIÚSCULA.
+ex: AdicionarAluno
+
+variáveis:
+- devem ter seus nomes suficientemente curtos, ou seja, auto-explicativos e obvios.
+- nomes de variáveis com um caractere devem ser usadas apenas para um escopo reduzido (para operar com while, for, etc).
+- a primeira letra de uma funcao deve ser MINÚSCULA.
+- as seguintes palavras contidas devem ter a primeira letra MAIÚSCULA.
+ex: idadeAluno
+
+constantes:
+- cada letra das constantes devem ser maiúsculas. 
+- as palavras devem ser separadas por underline.
+ex: MAXIMO_DE_ALUNOS
+
+
+
+
+
