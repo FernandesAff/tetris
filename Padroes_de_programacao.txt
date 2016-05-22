@@ -20,7 +20,7 @@ ex: AdicionarAluno
 variáveis:
 - devem ter seus nomes suficientemente curtos, ou seja, auto-explicativos e obvios.
 - nomes de variáveis com um caractere devem ser usadas apenas para um escopo reduzido (para operar com while, for, etc).
-- a primeira letra de uma funcao deve ser MINÚSCULA.
+- a primeira letra de uma variável deve ser MINÚSCULA.
 - as seguintes palavras contidas devem ter a primeira letra MAIÚSCULA.
 ex: idadeAluno
 
