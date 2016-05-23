@@ -5,25 +5,25 @@
 #include "tela.h"
 
 
-void set_peca_cor(TipoTela* peca_dada, int cor_aferida){
-	peca_dada->cor = cor_aferida;
+void SetPecaCor(TipoTela* pecaDada, int corAferida){
+	pecaDada->cor = corAferida;
 }
 
-void set_peca_caractere(TipoTela* peca_dada,char caractere_aferido){
-	peca_dada->peca = caractere_aferido;
+void SetPecaCaractere(TipoTela* pecaDada,char caractereAferido){
+	pecaDada->peca = caractereAferido;
 };
 
-void set_peca(TipoTela *peca_dada, char caractere_aferido, int cor_aferida){
-	set_peca_caractere(peca_dada,caractere_aferido);
-	set_peca_cor(peca_dada,cor_aferida);	
+void SetPeca(TipoTela *pecaDada, char caractereAferido, int corAferida){
+	SetPecaCaractere(pecaDada,caractereAferido);
+	SetPecaCor(pecaDada,corAferida);	
 }
 
-int verifica_se_bloco(TipoTela peca_dada){
-	if (peca_dada.peca==BLOCO) return 1;
+int VerificaSeBloco(TipoTela pecaDada){
+	if (pecaDada.peca==BLOCO) return 1;
 	else return 0;
 }
 
-void inicio_tela(){
+void InicioTela(){
 	int i,j;
 
 	start_color(); 
@@ -66,7 +66,7 @@ void inicio_tela(){
 
 }
 
-void criar_tela(TipoTela tela[][25]){
+void CriarTela(TipoTela tela[][25]){
 	int i,j;
 
 	for(i=0;i<15;i++){
@@ -77,7 +77,7 @@ void criar_tela(TipoTela tela[][25]){
 	}	
 }
 
-void mostrar_tela(TipoTela tela[][25], int pontos){
+void MostrarTela(TipoTela tela[][25], int pontos){
 	int i,j;
 
 	bkgd(COLOR_PAIR(1));
@@ -107,7 +107,7 @@ void mostrar_tela(TipoTela tela[][25], int pontos){
 	}
 }
 
-void fim_tela(int pontos){
+void FimTela(int pontos){
 	int i, j;
 	bkgd(COLOR_PAIR(8));
 

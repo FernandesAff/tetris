@@ -8,9 +8,9 @@
 int main () {
 	TipoTela tela[15][25];
 	
-	criar_tela(tela);
+	CriarTela(tela);
 	
-	loop(tela);
+	Loop(tela);
 
 	return 0;
 }

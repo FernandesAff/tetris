@@ -6,13 +6,13 @@
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h" 
 #include "engine.h"
-#include "peças.h"
+#include "pecas.h"
 
-void teste_corpeca_corfundo (void){
+void TesteCorPecaCorFundo (void){
 	TipoPeca peca;
 	int resultado=0, cores=2, i;
 
-	gera_peca(&peca, &cores);
+	GeraPeca(&peca);
 	for(i=0;i<5;i++){
 		if(peca.pecas[i].cor==1){
 			resultado=1;
@@ -21,12 +21,12 @@ void teste_corpeca_corfundo (void){
 	CU_ASSERT_FALSE(resultado);		
 }
 
-void teste_corpeca_diferente (void){
+void TesteCorPecaDiferente (void){
 	TipoPeca peca1, peca2;
-	int resultado=1, cor=2;
+	int resultado=1;
 
-	gera_peca(&peca1,&cor);
-	gera_peca(&peca2, &cor);
+	GeraPeca(&peca1);
+	GeraPeca(&peca2);
 
 	if(peca1.pecas[1].cor==peca2.pecas[1].cor){
 		resultado=0;
@@ -34,17 +34,17 @@ void teste_corpeca_diferente (void){
 	CU_ASSERT_TRUE(resultado);	
 }
 
-void teste_limpa_linha(void){
+void TesteLimpaLinha(void){
 	TipoTela tela[15][25];
 	int resultado=0, i,j,pont=0;
 
-	criar_tela(tela);
+	CriarTela(tela);
 	for(i=0;i<25;i++){
 		tela[7][i].peca='0';
 		tela[7][i].cor=5;
 	}
 
-	deletalinhas(tela, &pont);
+	DeletaLinhas(tela, &pont);
 
 	for(i=0;i<15;i++){
 		for(j=0;j<25;j++){
@@ -57,12 +57,12 @@ void teste_limpa_linha(void){
 	CU_ASSERT_FALSE(resultado);	
 }
 
-void testa_tamanho(void){
+void TestaTamanho(void){
 	TipoPeca peca;
-	int resultado=0, tam, cor=2;
+	int resultado=0, tam;
 
-	gera_peca(&peca, &cor);
-	tam=get_tamanho(peca);
+	GeraPeca(&peca);
+	tam=GetTamanho(peca);
 
 	if (tam>=3 && tam<=5){
 		resultado=1;
@@ -70,15 +70,15 @@ void testa_tamanho(void){
 	CU_ASSERT_TRUE(resultado);
 }
 
-void  adicionar_suite(void){
+void  AdicionarSuite(void){
 	CU_pSuite suite;
 	
 	suite = CU_add_suite("Testes de datas e nomes",NULL,NULL);
 	
-	CU_ADD_TEST(suite, teste_corpeca_corfundo);
-	CU_ADD_TEST(suite, teste_corpeca_diferente);
-	CU_ADD_TEST(suite, teste_limpa_linha);
-	CU_ADD_TEST(suite, testa_tamanho);
+	CU_ADD_TEST(suite, TesteCorPecaCorFundo);
+	CU_ADD_TEST(suite, TesteCorPecaDiferente);
+	CU_ADD_TEST(suite, TesteLimpaLinha);
+	CU_ADD_TEST(suite, TestaTamanho);
 }
 
 int main(){
@@ -86,7 +86,7 @@ int main(){
 	if (CUE_SUCCESS != CU_initialize_registry())
     		return CU_get_error();
 
-   	adicionar_suite();
+   	AdicionarSuite();
 	
 	CU_basic_set_mode(CU_BRM_VERBOSE);
 	
