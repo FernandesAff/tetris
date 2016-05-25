@@ -7,20 +7,18 @@
 #include <ncurses.h>
 #include "tela.h"
 
-
-typedef struct {
-	TipoTela pecas[5];
-	int x;
-	int y;
-	int orient;
-} TipoPeca;
+typedef struct TipoPeca TipoPeca;
 
 TipoPeca *AlocaPeca();
 void LiberaPeca(TipoPeca*);
-
+void CopiaPeca(TipoPeca*, TipoPeca*);
 void GeraPeca (TipoPeca *); //gera peca aleatoriamente sobre um dado ponteiro TipoPeca
 void MovePecaX (TipoPeca *, int);
 void MovePecaY (TipoPeca *, int);
-int GetTamanho(TipoPeca);
+int PecaGetTamanho(TipoPeca*);
+int PecaGetX(TipoPeca*);
+int PecaGetY(TipoPeca*);
+int PecaGetOrient(TipoPeca*);
+TipoTela PecaGetBloco(TipoPeca*, int); //retorna o caractere do bloco na posicao requerida 
 
 #endif

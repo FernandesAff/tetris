@@ -7,7 +7,7 @@ teste:teste.o tela.o engine.o pecas.o
 	gcc -Wall -ftest-coverage -fprofile-arcs -I./CUnit -L./CUnit teste.o tela.o engine.o pecas.o -lncurses -lcunit -o teste_gcov	
 
 main.o: main.c tela.c tela.h engine.c engine.h pecas.c pecas.h
-	gcc -c main.c 	
+	gcc -c main.c	
 
 teste.o: teste.c tela.c engine.c pecas.c
 	gcc -c teste.c

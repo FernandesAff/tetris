@@ -5,7 +5,41 @@
 #include "pecas.h"
 #include "tela.h"
 
+
+struct TipoPeca{
+	TipoTela pecas[5];
+	int x;
+	int y;
+	int orient;
+};
+
+
+
 int globalCorPeca = 2; 
+
+TipoTela PecaGetBloco(TipoPeca *peca, int i){
+	return peca->pecas[i];
+}
+
+void CopiaPeca(TipoPeca *pecaIn, TipoPeca *pecaOut){
+	int i=0;
+	pecaOut->x=pecaIn->x;
+	pecaOut->y=pecaIn->y;
+	pecaOut->orient=pecaIn->orient;
+	for (i=0;i<5;i++) pecaOut->pecas[i]=pecaIn->pecas[i];
+}
+
+int PecaGetX(TipoPeca *peca){
+	return peca->x;
+}
+
+int PecaGetY(TipoPeca *peca){
+	return peca->y;
+}
+
+int PecaGetOrient(TipoPeca *peca){
+	return peca->orient;
+}
 
 TipoPeca *AlocaPeca(){
 	TipoPeca *novaPeca = malloc(sizeof(TipoPeca));
@@ -17,10 +51,10 @@ void LiberaPeca(TipoPeca* peca){
 	free(peca);
 }
 
-int GetTamanho(TipoPeca pecaTetris){
+int PecaGetTamanho(TipoPeca *pecaTetris){
 	int tamanho=0;
 	
-	while (VerificaSeBloco(pecaTetris.pecas[tamanho])) tamanho++; 
+	while (VerificaSeBloco(pecaTetris->pecas[tamanho])) tamanho++; 
 	return tamanho;
 return tamanho;}
 

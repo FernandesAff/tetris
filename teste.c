@@ -9,12 +9,12 @@
 #include "pecas.h"
 
 void TesteCorPecaCorFundo (void){
-	TipoPeca peca;
+	TipoPeca *peca;
 	int resultado=0, cores=2, i;
 
-	GeraPeca(&peca);
+	GeraPeca(peca);
 	for(i=0;i<5;i++){
-		if(peca.pecas[i].cor==1){
+		if(PecaGetBloco(peca,i).cor==1){
 			resultado=1;
 		}	
 	}
@@ -22,13 +22,13 @@ void TesteCorPecaCorFundo (void){
 }
 
 void TesteCorPecaDiferente (void){
-	TipoPeca peca1, peca2;
+	TipoPeca *peca1, *peca2;
 	int resultado=1;
 
-	GeraPeca(&peca1);
-	GeraPeca(&peca2);
+	GeraPeca(peca1);
+	GeraPeca(peca2);
 
-	if(peca1.pecas[1].cor==peca2.pecas[1].cor){
+	if(PecaGetBloco(peca1,1).cor==PecaGetBloco(peca2,1).cor){
 		resultado=0;
 	}
 	CU_ASSERT_TRUE(resultado);	
@@ -58,11 +58,11 @@ void TesteLimpaLinha(void){
 }
 
 void TestaTamanho(void){
-	TipoPeca peca;
+	TipoPeca *peca;
 	int resultado=0, tam;
 
-	GeraPeca(&peca);
-	tam=GetTamanho(peca);
+	GeraPeca(peca);
+	tam=PecaGetTamanho(peca);
 
 	if (tam>=3 && tam<=5){
 		resultado=1;

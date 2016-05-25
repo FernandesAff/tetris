@@ -7,7 +7,11 @@
 #include <ncurses.h>
 #include "tela.h"
 #include "pecas.h"
-//#include "moduloauxengine.h" nao disponivel ao usuario
+
+#ifdef TEST_MODE
+	#include "moduloauxengine.h"
+#endif
+
 
 int VerificaMorte(TipoTela tela[][25]){
 	int i;
@@ -15,22 +19,22 @@ int VerificaMorte(TipoTela tela[][25]){
 	for (i=0; i<TAMANHOTELAX-1;i++){
 		if (VerificaSeBloco(tela[5][i]))
 		return(1);
-	}
+	}	
 	return(0);
 }
 
-int VerificaColisao(TipoPeca *pecaTetris, TipoTela tela[][25]){
+int VerificaColisao(TipoPeca *peca, TipoTela tela[][25]){
 	int i=0, colisao=0;
 
-		if (pecaTetris->orient==0){ 
-			while(VerificaSeBloco(pecaTetris->pecas[i]) ){
-				if(VerificaSeBloco(tela[(pecaTetris->y)][(pecaTetris->x)+i]) ) colisao=1;
+		if(PecaGetOrient(peca)==0){ 
+			while(VerificaSeBloco(PecaGetBloco(peca,i)) ){
+				if(VerificaSeBloco(tela[(PecaGetY(peca))][PecaGetX(peca)+i]) ) colisao=1;
 				i++;
 			}
 		}
 		else{ 
-			while(VerificaSeBloco(pecaTetris->pecas[i])){
-				if(VerificaSeBloco(tela[(pecaTetris->y)+i][(pecaTetris->x)]) ) colisao=1;
+			while(VerificaSeBloco(PecaGetBloco(peca,i))){
+				if(VerificaSeBloco(tela[PecaGetY(peca)+i][PecaGetX(peca)]) ) colisao=1;
 				i++;
 			}
 		}	
@@ -44,16 +48,16 @@ void DeletaBloco(TipoTela *unidade){
 void AddBloco(TipoPeca *peca,TipoTela tela[][25]){
 	int i;
 	
-	if (peca->orient==0){	
+	if (PecaGetOrient(peca)==0){	
 		for (i=0;i<5;i++) {
-			if (VerificaSeBloco(peca->pecas[i])){
-			tela[peca->y][(peca->x)+i]=peca->pecas[i];
+			if (VerificaSeBloco(PecaGetBloco(peca,i))){
+			tela[PecaGetY(peca)][(PecaGetX(peca))+i]=PecaGetBloco(peca,i);
 			}
 		}
 	}	
 	else{
 		for (i=0;i<5;i++){
-			if (VerificaSeBloco(peca->pecas[i])) tela[peca->y +i][(peca->x)]=peca->pecas[i];
+			if (VerificaSeBloco(PecaGetBloco(peca,i))) tela[PecaGetY(peca) +i][PecaGetX(peca)]=PecaGetBloco(peca,i);
 		}
 	}
 }
@@ -61,17 +65,17 @@ void AddBloco(TipoPeca *peca,TipoTela tela[][25]){
 void RemoveBloco(TipoPeca *peca,TipoTela tela[][25]){
 	int i;
 	
-	if (peca->orient==0){
+	if (PecaGetOrient(peca)==0){
 		for (i=0;i<5;i++) {
-			if (VerificaSeBloco(peca->pecas[i])){
-				DeletaBloco(&tela[peca->y][(peca->x)+i]);
+			if (VerificaSeBloco(PecaGetBloco(peca,i))){
+				DeletaBloco(&tela[PecaGetY(peca)][PecaGetX(peca)+i]);
 			}	
 		}
 	}	
 	else{
 		for (i=0;i<5;i++) {
-			if (VerificaSeBloco(peca->pecas[i])){
-				DeletaBloco(&tela[(peca->y)+i][peca->x]);
+			if (VerificaSeBloco(PecaGetBloco(peca,i)) ){
+				DeletaBloco(&tela[PecaGetY(peca)+i][PecaGetX(peca)]);
 			}
 		}
 	}	
@@ -149,11 +153,15 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	    pontuacao=0;
 
 
-	TipoPeca currentPeca, 
-		 oldPeca;
+//	TipoPeca currentPeca, 
+//		 oldPeca;
 
+	TipoPeca *pecaAgora = AlocaPeca(),
+		 *pecaAntes = AlocaPeca();
 
-	//criaaleatorio(tela, 2, 0.6);
+	#ifdef TEST_MODE	
+		criaaleatorio(tela, 2, 0.6);
+	#endif
 
 	initscr();
 	InicioTela();
@@ -162,12 +170,12 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	keypad(stdscr, TRUE);
 //	timeout(300);
 
-	GeraPeca (&currentPeca); //cria aleatoriamente
-	AddBloco(&currentPeca, tela); //aplica à matriz
-	tamanhoPeca=GetTamanho(currentPeca);
+	GeraPeca (pecaAgora); //cria aleatoriamente
+	AddBloco(pecaAgora, tela); //aplica à matriz
+	tamanhoPeca=PecaGetTamanho(pecaAgora);
 
 	while (sair==0){
-		oldPeca=currentPeca;
+		CopiaPeca(pecaAgora,pecaAntes);
 
 		prevX=x;
 		prevY=y;	
@@ -179,7 +187,7 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 				break;
 
 			case 2: 
-				if (currentPeca.orient==1){
+				if (PecaGetOrient(pecaAgora)==1){
 					if (y<TAMANHOTELAY-tamanhoPeca)
 					y++;
 					else colisaoVertical=1;
@@ -192,7 +200,7 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 				break;
 
 			case 3: 
-				if (currentPeca.orient==0){
+				if (PecaGetOrient(pecaAgora)==0){
 					if (x<TAMANHOTELAX-tamanhoPeca)
 					x++;
 					}
@@ -207,13 +215,13 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 				break;
 		}
 	
-		RemoveBloco(&currentPeca,tela); //remove peca do tetris da matriz tela
-		MovePecaX(&currentPeca,x);    // atribui as propriedades de posicao
-		MovePecaY(&currentPeca,y);
+		RemoveBloco(pecaAgora,tela); //remove peca do tetris da matriz tela
+		MovePecaX(pecaAgora,x);    // atribui as propriedades de posicao
+		MovePecaY(pecaAgora,y);
 
-		if (!VerificaColisao(&currentPeca,tela)){ //verifica se o estado de posicao ja esta ocupado com alguma peca da matriz
-			RemoveBloco(&oldPeca, tela); //caso esteja vago, remove peca antiga
-			AddBloco(&currentPeca, tela); //e atualiza a peca
+		if (!VerificaColisao(pecaAgora,tela)){ //verifica se o estado de posicao ja esta ocupado com alguma peca da matriz
+			RemoveBloco(pecaAntes, tela); //caso esteja vago, remove peca antiga
+			AddBloco(pecaAgora, tela); //e atualiza a peca
 			}
 		else{    //caso nao esteja vago
 			x=prevX; //retorna a posicao x anterior, impedindo as sobreposicoes
@@ -223,18 +231,18 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 				}
 			}
 			// ou seja, caso haja uma colisao no eixo y
-			MovePecaX(&currentPeca,x); //atribui posicoes anteriores
-			MovePecaY(&currentPeca,y); 
-			AddBloco(&currentPeca, tela); //desenha na matriz tela
+			MovePecaX(pecaAgora,x); //atribui posicoes anteriores
+			MovePecaY(pecaAgora,y); 
+			AddBloco(pecaAgora, tela); //desenha na matriz tela
 
 		if (colisaoVertical) {
 			if (VerificaMorte(tela)) sair=1;//morre se ha algum bloco na posicao y=5 <------------------
-			GeraPeca (&currentPeca); //cria aleatoriamente
-			tamanhoPeca=GetTamanho(currentPeca);
-			x=currentPeca.x; y=currentPeca.y;
+			GeraPeca (pecaAgora); //cria aleatoriamente
+			tamanhoPeca=PecaGetTamanho(pecaAgora);
+			x=PecaGetX(pecaAgora); y=PecaGetY(pecaAgora);
 			DeletaLinhas(tela, &pontuacao); //verifica se alguma linha foi completada
 			//if (VerificaColisao(&currentPeca,tela)) sair=1; //game over se a peca nova se sobrepoe a alguma peca (n especificado)
-			if (sair!=1) AddBloco(&currentPeca, tela); // desenha só se nao tiver morrido
+			if (sair!=1) AddBloco(pecaAgora, tela); // desenha só se nao tiver morrido
 			}
 		colisaoVertical=0;
 		
@@ -250,6 +258,8 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 			}
 		clear();
 	}
+	LiberaPeca(pecaAgora);
+	LiberaPeca(pecaAntes);
  	FimTela(pontuacao); //a vida eh mesmo curta...
 	endwin();
 
