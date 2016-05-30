@@ -15,6 +15,7 @@ void CopiaPeca(TipoPeca*, TipoPeca*);
 void GeraPeca (TipoPeca *); //gera peca aleatoriamente sobre um dado ponteiro TipoPeca
 void MovePecaX (TipoPeca *, int);
 void MovePecaY (TipoPeca *, int);
+void RotacionaPeca(TipoPeca*);
 int PecaGetCor(TipoPeca*);
 int PecaGetTamanhoX(TipoPeca*); //retorna tamanho horizontal maximo
 int PecaGetTamanhoY(TipoPeca*); //retorna tamanho horizontal maximo

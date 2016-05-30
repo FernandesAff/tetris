@@ -13,13 +13,13 @@
 #endif
 
 
-enum inputs{
+enum comandos{
 	ESQUERDA,
 	BAIXO,
 	DIREITA,
 	CIMA,
 	SAIR
-} inp;
+} com;
 
 int VerificaMorte(TipoTela tela[][25]){
 	int i;
@@ -34,12 +34,43 @@ int VerificaMorte(TipoTela tela[][25]){
 int VerificaColisao(TipoPeca *peca, TipoTela tela[][25]){
 	int i=0, j=0, colisao=0;
 
+	//verifica colisao com blocos:
 	for(i=0;i<5;i++) for(j=0;j<5;j++){
 		if(VerificaSeBloco(tela[(PecaGetY(peca))+j][PecaGetX(peca)+i]) && 
 			VerificaSeBloco(PecaGetBloco(peca,j,i))) colisao=1;
 		}
+
+	//verifica colisao com parede:
+	if(!colisao){
+		for(i=0;i<5;i++) for(j=0;j<5;j++){
+			if (VerificaSeBloco(PecaGetBloco(peca,i,j))) {
+				     if ( (PecaGetX(peca)+j)>TAMANHOTELAX-1) colisao=1; //colide à direita
+				else if ((PecaGetX(peca)+j)<0) colisao=1; 		//colide à esquerda	
+				else if ( (PecaGetY(peca)+i)>TAMANHOTELAY-1) colisao=1; //colide abaixo
+				else if ((PecaGetY(peca)+i)<0) colisao=1; 		//colide acima
+			}
+		}
+	}
+
+		
+
 	return colisao;
 	}
+
+void PoePecaNoTopo(TipoPeca *peca, TipoTela tela[][25]){
+	int y=0;
+	TipoPeca *pecaAux = AlocaPeca();
+	CopiaPeca(peca,pecaAux);
+	y=PecaGetY(peca);
+
+	while(!VerificaColisao(pecaAux,tela)) {
+		y--;
+		MovePecaY(pecaAux,y);
+		if (!VerificaColisao(pecaAux,tela)) CopiaPeca(pecaAux,peca);
+		}
+	LiberaPeca(pecaAux);
+	}
+
 
 void DeletaBloco(TipoTela *unidade){
 	SetPeca(unidade,VAZIO,CORFUNDO);
@@ -72,7 +103,7 @@ int VerificaLinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha 
 		for (j=0;j<TAMANHOTELAX;j++){
 			if (!VerificaSeBloco(tela[i][j])) {
 				completa=0;
-				j=100;
+				break;
 			}
 		}
 		if (completa==1) return i;
@@ -127,15 +158,15 @@ int PegaInput(){ //corrigir para as setas
 }
 
 int Loop(TipoTela tela[][TAMANHOTELAX]){
-	int sair=0,
-	    x=10,
+	int rotaciona=0,
+	    sair=0,
+	    x=0,
 	    y=0,
 	    prevX=0,
 	    prevY=0,
-	    tamanhoPecaX=0,
-	    tamanhoPecaY=0,
 	    colisaoVertical=0,
-	    pontuacao=0;
+	    pontuacao=0,
+	    flagDesce=0;
 
 	TipoPeca *pecaAgora = AlocaPeca(),
 		 *pecaAntes = AlocaPeca();
@@ -152,72 +183,71 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 //	timeout(300);
 
 	GeraPeca (pecaAgora); //cria aleatoriamente
+	PoePecaNoTopo(pecaAgora, tela);
+	x=PecaGetX(pecaAgora); y=PecaGetY(pecaAgora);
 	AddBloco(pecaAgora, tela); //aplica à matriz
-	tamanhoPecaX=PecaGetTamanhoX(pecaAgora);
-	tamanhoPecaY=PecaGetTamanhoY(pecaAgora);
 
 	while (sair==0){
 		CopiaPeca(pecaAgora,pecaAntes);
-
 		prevX=x;
 		prevY=y;	
 		MostrarTela(tela,pontuacao); //desenha
 
 		switch(PegaInput()){
-			case ESQUERDA: if (x>0)
+			case ESQUERDA:
 				x--;
 				break;
 
 			case BAIXO: 
-				if (y<TAMANHOTELAY-tamanhoPecaY-1)
 				y++;
-				else colisaoVertical=1; 
-
+				flagDesce = 1;
 				break;
 
 			case DIREITA: 
-				if (x<TAMANHOTELAX-tamanhoPecaX-1)
 				x++;
 				break;
 
-			case CIMA: if (y>0) //opcao de teste para subir
-				y--;
+			case CIMA:
+				
+				rotaciona = 1 ;
 				break;
 
-			case SAIR: sair=1;
+			case SAIR:
+				sair = 1 ;
 				break;
-		}
-	
+		}	
 		RemoveBloco(pecaAgora,tela); //remove peca do tetris da matriz tela
 		MovePecaX(pecaAgora,x);    // atribui as propriedades de posicao
 		MovePecaY(pecaAgora,y);
-
-		if (!VerificaColisao(pecaAgora,tela)){ //verifica se o estado de posicao ja esta ocupado com alguma peca da matriz
-			RemoveBloco(pecaAntes, tela); //caso esteja vago, remove peca antiga
-			AddBloco(pecaAgora, tela); //e atualiza a peca
+		if (rotaciona){
+			RotacionaPeca(pecaAgora);
+			rotaciona = 0;
 			}
+
+		if (!VerificaColisao(pecaAgora,tela)) //verifica se está colidindo
+			AddBloco(pecaAgora, tela);    //e atualiza a peca
+			
 		else{    //caso nao esteja vago
-			x=prevX; //retorna a posicao x anterior, impedindo as sobreposicoes
-			if (y!=prevY) { //se verdedairo significa que houve uma colisao no eixo y
-				y=prevY;
+			if (y>prevY) { //se verdedairo significa que houve uma colisao no eixo y
 				colisaoVertical=1; //flag para fixar a peca e tomar as medidas necessarias
 				}
-			MovePecaX(pecaAgora,x); //atribui posicoes anteriores
-			MovePecaY(pecaAgora,y); 
+			x=prevX; //retorna a posicao x anterior, impedindo as sobreposicoes
+			y=prevY;
+			CopiaPeca(pecaAntes,pecaAgora);
 			AddBloco(pecaAgora, tela); //atribui à matriz tela
-			}
 
-		if (colisaoVertical) {
-			if (VerificaMorte(tela)) sair=1;//morre se ha algum bloco na posicao y=5 <------------------
-			GeraPeca (pecaAgora); //cria aleatoriamente
-			tamanhoPecaX=PecaGetTamanhoX(pecaAgora);
-			tamanhoPecaY=PecaGetTamanhoY(pecaAgora);
-			x=PecaGetX(pecaAgora); y=PecaGetY(pecaAgora);
-			DeletaLinhas(tela, &pontuacao); //verifica se alguma linha foi completada
-			//if (VerificaColisao(&currentPeca,tela)) sair=1; //game over se a peca nova se sobrepoe a alguma peca (n especificado)
-			if (sair!=1) AddBloco(pecaAgora, tela); // desenha só se nao tiver morrido
-			}
-		colisaoVertical=0;
+			if (colisaoVertical) {
+				if (VerificaMorte(tela)) 
+					sair=1;			//morre se ha algum bloco na posicao y=5 <------------------
+				GeraPeca (pecaAgora); //cria aleatoriamente
+				PoePecaNoTopo(pecaAgora, tela);
+				x=PecaGetX(pecaAgora); y=PecaGetY(pecaAgora);
+				DeletaLinhas(tela, &pontuacao); //verifica se alguma linha foi completada
+				if (sair!=1) 
+					AddBloco(pecaAgora, tela); // desenha só se nao tiver morrido
+				colisaoVertical=0;
+				}
+		}
 		
 
 		if (sair==1) { //mostra o momento de derrota 

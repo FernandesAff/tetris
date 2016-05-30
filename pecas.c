@@ -17,7 +17,7 @@ struct TipoPeca{
 	TipoTela pecas[TAMANHO_Y][TAMANHO_X];
 	int x;
 	int y;
-	int orient;
+	int orient;	/************* apagar ? ***************/
 };
 
 
@@ -27,53 +27,110 @@ static int globalCorPeca = 2;
 static char MATRIZ_DE_PECAS [NUM_PECAS][TAMANHO_Y][TAMANHO_X] =  
 {
 	{
-	 {B,B,B,B,B},
-	 {V,V,V,V,V},
-	 {V,V,V,V,V},
-	 {V,V,V,V,V},
+	 {V,V,B,V,V},
+	 {V,V,B,V,V},
+	 {V,V,B,V,V},
+	 {V,V,B,V,V},
+	 {V,V,B,V,V}
+	},
+	{
+	 {V,V,B,V,V},
+	 {V,V,B,V,V},
+	 {V,V,B,V,V},
+	 {V,V,B,V,V},
 	 {V,V,V,V,V}
 	},
 	{
-	 {B,B,B,B,V},
 	 {V,V,V,V,V},
-	 {V,V,V,V,V},
-	 {V,V,V,V,V},
+	 {V,V,B,V,V},
+	 {V,V,B,V,V},
+	 {V,V,B,V,V},
 	 {V,V,V,V,V}
 	},
 	{
-	 {B,B,B,V,V},
 	 {V,V,V,V,V},
-	 {V,V,V,V,V},
-	 {V,V,V,V,V},
-	 {V,V,V,V,V}
-	},
-	{
-	 {B,B,V,V,V},
-	 {V,B,V,V,V},
 	 {V,B,B,V,V},
-	 {V,V,V,V,V},
+	 {V,V,B,V,V},
+	 {V,V,B,B,V},
 	 {V,V,V,V,V}
 	},
 	{
+	 {V,V,V,V,V},
 	 {B,B,B,B,B},
 	 {V,V,B,V,V},
 	 {V,V,B,V,V},
-	 {V,V,V,V,V},
 	 {V,V,V,V,V}
 	},{
-	 {B,V,V,V,V},
-	 {B,V,V,V,V},
-	 {B,B,B,V,V},
 	 {V,V,V,V,V},
+	 {V,B,V,V,V},
+	 {V,B,V,V,V},
+	 {V,B,B,B,V},
 	 {V,V,V,V,V}	
 	},{
-	 {B,B,V,V,V},
-	 {B,B,V,V,V},
 	 {V,V,V,V,V},
+	 {V,B,B,V,V},
+	 {V,B,B,V,V},
 	 {V,V,V,V,V},
 	 {V,V,V,V,V}
 	}
 };
+
+
+void EnquadraPeca(TipoPeca *peca){
+	int i=0,
+	    j=0,
+	    taVago=1;
+	
+	TipoTela vazio;
+	
+	vazio.peca = V;
+	vazio.cor = COR_FUNDO;
+
+	do{
+		for(i=0;i<5;i++)
+			if (VerificaSeBloco(peca->pecas[0][i])) {
+				taVago =-1;
+				break;
+				}
+		
+
+		if (taVago==1){
+			for(i=0;i<4;i++)
+				for(j=0;j<5;j++){
+				peca->pecas[i][j]=peca->pecas[i+1][j];
+				}
+
+			for(j=0;j<5;j++) peca->pecas[4][j]=vazio;
+		}						
+		
+
+	}while(taVago != -1);
+
+}
+
+
+
+void RotacionaPeca(TipoPeca *peca){
+	
+	int i,
+	    j;
+	TipoPeca *pecaAux;
+	pecaAux = AlocaPeca();
+
+	*pecaAux = *peca;
+
+	for (i=0;i<5;i++){
+		for(j=0;j<5;j++){
+			// (x,y) -> (y,6-x) rotacao em 90 graus, horario
+			peca->pecas[i][j] = pecaAux->pecas[j][4-i]; 
+		}		
+	}
+	LiberaPeca(pecaAux);
+	//EnquadraPeca(peca);
+}
+
+
+
 
 
 void CopiaDaMatrizDePecas(char MatrizFonte[][5], TipoTela MatrizAlvo[][5]){
@@ -111,15 +168,36 @@ void CopiaDaMatrizDePecas(char MatrizFonte[][5], TipoTela MatrizAlvo[][5]){
 
 void GeraPeca(TipoPeca *ponteiroPeca){
 
-	int indicePeca=-1;
+	int indicePeca = -1,
+	    direcao = -1;
 
 	srand (time(NULL));	
 	indicePeca = rand() % NUM_PECAS;
+	srand (time(NULL));	
+	direcao = rand() % 4;
+
 	ponteiroPeca-> x=10; //centraliza a peca
 	ponteiroPeca-> y=0;
 	ponteiroPeca-> orient = 0;
 	
 	CopiaDaMatrizDePecas(MATRIZ_DE_PECAS[indicePeca],ponteiroPeca->pecas);
+
+	switch (direcao){
+		case(0): //nao rotaciona
+			break;
+		case(1):// rotaciona 1x
+			RotacionaPeca(ponteiroPeca);
+			break;
+		case(2):// rotaciona 2x  ...
+			RotacionaPeca(ponteiroPeca);
+			RotacionaPeca(ponteiroPeca);
+			break;
+		case(3):
+			RotacionaPeca(ponteiroPeca);
+			RotacionaPeca(ponteiroPeca);
+			RotacionaPeca(ponteiroPeca);
+			break;
+		}
 
 
 }
@@ -147,12 +225,7 @@ int PecaGetCor(TipoPeca *peca){
 	}
 
 void CopiaPeca(TipoPeca *pecaIn, TipoPeca *pecaOut){
-	int i=0, j=0;
-	pecaOut->x=pecaIn->x;
-	pecaOut->y=pecaIn->y;
-	pecaOut->orient=pecaIn->orient;
-	for (i=0;i<TAMANHO_Y;i++) 
-		for (j=0;j<TAMANHO_X;j++) pecaOut->pecas[i][j]=pecaIn->pecas[i][j];
+	*pecaOut=*pecaIn;
 	}
 
 int PecaGetX(TipoPeca *peca){
