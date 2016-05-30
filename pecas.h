@@ -15,10 +15,12 @@ void CopiaPeca(TipoPeca*, TipoPeca*);
 void GeraPeca (TipoPeca *); //gera peca aleatoriamente sobre um dado ponteiro TipoPeca
 void MovePecaX (TipoPeca *, int);
 void MovePecaY (TipoPeca *, int);
-int PecaGetTamanho(TipoPeca*);
+int PecaGetCor(TipoPeca*);
+int PecaGetTamanhoX(TipoPeca*); //retorna tamanho horizontal maximo
+int PecaGetTamanhoY(TipoPeca*); //retorna tamanho horizontal maximo
 int PecaGetX(TipoPeca*);
 int PecaGetY(TipoPeca*);
 int PecaGetOrient(TipoPeca*);
-TipoTela PecaGetBloco(TipoPeca*, int); //retorna o caractere do bloco na posicao requerida 
+TipoTela PecaGetBloco(TipoPeca*, int, int); //retorna o caractere do bloco na posicao requerida (x,y)
 
 #endif

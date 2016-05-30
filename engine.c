@@ -13,72 +13,56 @@
 #endif
 
 
+enum inputs{
+	ESQUERDA,
+	BAIXO,
+	DIREITA,
+	CIMA,
+	SAIR
+} inp;
+
 int VerificaMorte(TipoTela tela[][25]){
 	int i;
 	
 	for (i=0; i<TAMANHOTELAX-1;i++){
 		if (VerificaSeBloco(tela[5][i]))
 		return(1);
-	}	
+		}	
 	return(0);
-}
+	}
 
 int VerificaColisao(TipoPeca *peca, TipoTela tela[][25]){
-	int i=0, colisao=0;
+	int i=0, j=0, colisao=0;
 
-		if(PecaGetOrient(peca)==0){ 
-			while(VerificaSeBloco(PecaGetBloco(peca,i)) ){
-				if(VerificaSeBloco(tela[(PecaGetY(peca))][PecaGetX(peca)+i]) ) colisao=1;
-				i++;
-			}
+	for(i=0;i<5;i++) for(j=0;j<5;j++){
+		if(VerificaSeBloco(tela[(PecaGetY(peca))+j][PecaGetX(peca)+i]) && 
+			VerificaSeBloco(PecaGetBloco(peca,j,i))) colisao=1;
 		}
-		else{ 
-			while(VerificaSeBloco(PecaGetBloco(peca,i))){
-				if(VerificaSeBloco(tela[PecaGetY(peca)+i][PecaGetX(peca)]) ) colisao=1;
-				i++;
-			}
-		}	
 	return colisao;
-}
+	}
 
 void DeletaBloco(TipoTela *unidade){
 	SetPeca(unidade,VAZIO,CORFUNDO);
-}
+	}
 
 void AddBloco(TipoPeca *peca,TipoTela tela[][25]){
-	int i;
-	
-	if (PecaGetOrient(peca)==0){	
-		for (i=0;i<5;i++) {
-			if (VerificaSeBloco(PecaGetBloco(peca,i))){
-			tela[PecaGetY(peca)][(PecaGetX(peca))+i]=PecaGetBloco(peca,i);
+	int i,j;
+
+	for (i=0;i<5;i++) for (j=0;j<5;j++) {
+		if (VerificaSeBloco(PecaGetBloco(peca,i,j))){
+			tela[PecaGetY(peca)+i][(PecaGetX(peca))+j]=PecaGetBloco(peca,i,j);
 			}
-		}
-	}	
-	else{
-		for (i=0;i<5;i++){
-			if (VerificaSeBloco(PecaGetBloco(peca,i))) tela[PecaGetY(peca) +i][PecaGetX(peca)]=PecaGetBloco(peca,i);
 		}
 	}
-}
 
 void RemoveBloco(TipoPeca *peca,TipoTela tela[][25]){
-	int i;
+	int i, j;
+	for (i=0;i<5;i++) for (j=0;j<5;j++) {
+		if (VerificaSeBloco(PecaGetBloco(peca,i,j))){
+			DeletaBloco(&tela[PecaGetY(peca)+i][(PecaGetX(peca))+j]);
+		}
+	}
 	
-	if (PecaGetOrient(peca)==0){
-		for (i=0;i<5;i++) {
-			if (VerificaSeBloco(PecaGetBloco(peca,i))){
-				DeletaBloco(&tela[PecaGetY(peca)][PecaGetX(peca)+i]);
-			}	
-		}
-	}	
-	else{
-		for (i=0;i<5;i++) {
-			if (VerificaSeBloco(PecaGetBloco(peca,i)) ){
-				DeletaBloco(&tela[PecaGetY(peca)+i][PecaGetX(peca)]);
-			}
-		}
-	}	
 }
 
 int VerificaLinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha completa
@@ -124,19 +108,19 @@ int PegaInput(){ //corrigir para as setas
 	
 	switch(getch()){
 		case KEY_LEFT: 
-			input=1;
+			input = ESQUERDA;
 			break;	
 		case KEY_DOWN:
-			input=2;
+			input = BAIXO;
 			break;
 		case KEY_RIGHT: 
-			input=3;
+			input = DIREITA;
 			break;
 		case KEY_UP: 
-			input=4;
+			input = CIMA;
 			break;
 		case 'q':
-			input=5;
+			input = SAIR;
 			break;
 	}
 	return input;
@@ -148,13 +132,10 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	    y=0,
 	    prevX=0,
 	    prevY=0,
-	    tamanhoPeca=0,
+	    tamanhoPecaX=0,
+	    tamanhoPecaY=0,
 	    colisaoVertical=0,
 	    pontuacao=0;
-
-
-//	TipoPeca currentPeca, 
-//		 oldPeca;
 
 	TipoPeca *pecaAgora = AlocaPeca(),
 		 *pecaAntes = AlocaPeca();
@@ -172,7 +153,8 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 
 	GeraPeca (pecaAgora); //cria aleatoriamente
 	AddBloco(pecaAgora, tela); //aplica à matriz
-	tamanhoPeca=PecaGetTamanho(pecaAgora);
+	tamanhoPecaX=PecaGetTamanhoX(pecaAgora);
+	tamanhoPecaY=PecaGetTamanhoY(pecaAgora);
 
 	while (sair==0){
 		CopiaPeca(pecaAgora,pecaAntes);
@@ -182,36 +164,27 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 		MostrarTela(tela,pontuacao); //desenha
 
 		switch(PegaInput()){
-			case 1: if (x>0)
+			case ESQUERDA: if (x>0)
 				x--;
 				break;
 
-			case 2: 
-				if (PecaGetOrient(pecaAgora)==1){
-					if (y<TAMANHOTELAY-tamanhoPeca)
-					y++;
-					else colisaoVertical=1;
-					}
-				else {
-					if (y<TAMANHOTELAY-1)
-					y++;
-					else colisaoVertical=1;
-					}
+			case BAIXO: 
+				if (y<TAMANHOTELAY-tamanhoPecaY-1)
+				y++;
+				else colisaoVertical=1; 
+
 				break;
 
-			case 3: 
-				if (PecaGetOrient(pecaAgora)==0){
-					if (x<TAMANHOTELAX-tamanhoPeca)
-					x++;
-					}
-				else  if (x<TAMANHOTELAX-1) x++;
+			case DIREITA: 
+				if (x<TAMANHOTELAX-tamanhoPecaX-1)
+				x++;
 				break;
 
-/*			case 4: if (y>0) opcao de teste para subir
-*				y--;
-*				break;
-*/
-			case 5: sair=1;
+			case CIMA: if (y>0) //opcao de teste para subir
+				y--;
+				break;
+
+			case SAIR: sair=1;
 				break;
 		}
 	
@@ -225,20 +198,20 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 			}
 		else{    //caso nao esteja vago
 			x=prevX; //retorna a posicao x anterior, impedindo as sobreposicoes
-			if (y!=prevY) { //significa que houve uma colisao no eixo y
+			if (y!=prevY) { //se verdedairo significa que houve uma colisao no eixo y
 				y=prevY;
 				colisaoVertical=1; //flag para fixar a peca e tomar as medidas necessarias
 				}
-			}
-			// ou seja, caso haja uma colisao no eixo y
 			MovePecaX(pecaAgora,x); //atribui posicoes anteriores
 			MovePecaY(pecaAgora,y); 
-			AddBloco(pecaAgora, tela); //desenha na matriz tela
+			AddBloco(pecaAgora, tela); //atribui à matriz tela
+			}
 
 		if (colisaoVertical) {
 			if (VerificaMorte(tela)) sair=1;//morre se ha algum bloco na posicao y=5 <------------------
 			GeraPeca (pecaAgora); //cria aleatoriamente
-			tamanhoPeca=PecaGetTamanho(pecaAgora);
+			tamanhoPecaX=PecaGetTamanhoX(pecaAgora);
+			tamanhoPecaY=PecaGetTamanhoY(pecaAgora);
 			x=PecaGetX(pecaAgora); y=PecaGetY(pecaAgora);
 			DeletaLinhas(tela, &pontuacao); //verifica se alguma linha foi completada
 			//if (VerificaColisao(&currentPeca,tela)) sair=1; //game over se a peca nova se sobrepoe a alguma peca (n especificado)
@@ -247,20 +220,20 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 		colisaoVertical=0;
 		
 
-		if (sair==1) { //mostra o tragico momento de derrota 
-			//pinta os blocos de vermelho, bem dramático
+		if (sair==1) { //mostra o momento de derrota 
+			//pinta os blocos de vermelho dramático
 			for(x=0;x<TAMANHOTELAX;x++)
 				for(y=0;y<TAMANHOTELAY;y++)
 					if(VerificaSeBloco(tela[y][x]))SetPecaCor(&tela[y][x],CORVERMELHO);
 			 //desenha a tela, pela ultima vez :(
 			MostrarTela(tela,pontuacao);
-			getch();   // e o ultimo instante, para repensar e lastimar junto aos arrependimentos
+			getch();  
 			}
 		clear();
 	}
 	LiberaPeca(pecaAgora);
 	LiberaPeca(pecaAntes);
- 	FimTela(pontuacao); //a vida eh mesmo curta...
+ 	FimTela(pontuacao);
 	endwin();
 
 return(0);

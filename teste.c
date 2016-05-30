@@ -10,28 +10,33 @@
 
 void TesteCorPecaCorFundo (void){
 	TipoPeca *peca;
-	int resultado=0, cores=2, i;
-
+	int resultado=0, cores=2, i,j;
+	peca = AlocaPeca();
 	GeraPeca(peca);
-	for(i=0;i<5;i++){
-		if(PecaGetBloco(peca,i).cor==1){
-			resultado=1;
-		}	
-	}
-	CU_ASSERT_FALSE(resultado);		
+	for(i=0;i<5;i++)
+		for(j=0;j<5;j++)
+			if(PecaGetBloco(peca,i,j).cor==1)
+				resultado=1;
+			
+	
+	CU_ASSERT_FALSE(resultado);
+	LiberaPeca(peca);		
 }
 
 void TesteCorPecaDiferente (void){
 	TipoPeca *peca1, *peca2;
 	int resultado=1;
-
+	peca1 = AlocaPeca();
+	peca2 = AlocaPeca();
 	GeraPeca(peca1);
 	GeraPeca(peca2);
 
-	if(PecaGetBloco(peca1,1).cor==PecaGetBloco(peca2,1).cor){
+	if(PecaGetCor(peca1)==PecaGetCor(peca2))
 		resultado=0;
-	}
+
 	CU_ASSERT_TRUE(resultado);	
+	LiberaPeca(peca1);
+	LiberaPeca(peca2);
 }
 
 void TesteLimpaLinha(void){
@@ -57,17 +62,18 @@ void TesteLimpaLinha(void){
 	CU_ASSERT_FALSE(resultado);	
 }
 
-void TestaTamanho(void){
+void TestaTamanho(void){ // acho que este teste nao faz mais sentido
 	TipoPeca *peca;
 	int resultado=0, tam;
-
+	peca = AlocaPeca();
 	GeraPeca(peca);
-	tam=PecaGetTamanho(peca);
+	tam=PecaGetTamanhoX(peca);
 
 	if (tam>=3 && tam<=5){
 		resultado=1;
 	}
 	CU_ASSERT_TRUE(resultado);
+	LiberaPeca(peca);
 }
 
 void  AdicionarSuite(void){
