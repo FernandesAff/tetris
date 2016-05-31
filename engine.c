@@ -7,11 +7,13 @@
 #include <ncurses.h>
 #include "tela.h"
 #include "pecas.h"
+#include "time.h"
 
 #ifdef TEST_MODE
 	#include "moduloauxengine.h"
 #endif
 
+int globalTempo;
 
 enum comandos{
 	ESQUERDA,
@@ -153,9 +155,30 @@ int PegaInput(){ //corrigir para as setas
 		case 'q':
 			input = SAIR;
 			break;
+		default :
+			input = -1;
+			break;
 	}
 	return input;
 }
+
+
+int Temporizador(int milissegundos, int *acelera){
+	int constante = CLOCKS_PER_SEC/1000;
+	int input;
+
+	if (*acelera) milissegundos /=2 ;
+	while(((int)clock() - globalTempo) < milissegundos * constante){
+		input = PegaInput();
+		if(input!=-1) break;
+	}
+	if (((int)clock() - globalTempo) >= milissegundos * constante) {
+		globalTempo = (int)clock ();
+		input =-1;
+		}
+	return input;
+};
+
 
 int Loop(TipoTela tela[][TAMANHOTELAX]){
 	int rotaciona=0,
@@ -166,7 +189,9 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	    prevY=0,
 	    colisaoVertical=0,
 	    pontuacao=0,
-	    flagDesce=0;
+	    flagDesce=1,
+	    input=-1,
+	    flagAcelera = 0;
 
 	TipoPeca *pecaAgora = AlocaPeca(),
 		 *pecaAntes = AlocaPeca();
@@ -180,7 +205,7 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
-//	timeout(300);
+	timeout(0);
 
 	GeraPeca (pecaAgora); //cria aleatoriamente
 	PoePecaNoTopo(pecaAgora, tela);
@@ -192,15 +217,15 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 		prevX=x;
 		prevY=y;	
 		MostrarTela(tela,pontuacao); //desenha
-
-		switch(PegaInput()){
+		input = Temporizador(1000, &flagAcelera);
+		switch(input){
 			case ESQUERDA:
 				x--;
 				break;
 
 			case BAIXO: 
-				y++;
-				flagDesce = 1;
+				flagAcelera = 1;
+				//flagDesce = 1;
 				break;
 
 			case DIREITA: 
@@ -215,7 +240,19 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 			case SAIR:
 				sair = 1 ;
 				break;
+			
+			default:
+				flagDesce = 1 ;
+				flagAcelera = 0;
+				break;
+				
 		}	
+
+		if (flagDesce) {
+			y++;
+			flagDesce = 0;
+			}
+
 		RemoveBloco(pecaAgora,tela); //remove peca do tetris da matriz tela
 		MovePecaX(pecaAgora,x);    // atribui as propriedades de posicao
 		MovePecaY(pecaAgora,y);
