@@ -10,7 +10,7 @@
 
 void TesteCorPecaCorFundo (void){
 	TipoPeca *peca;
-	int resultado=0, cores=2, i,j;
+	int resultado=0, i,j;
 	peca = AlocaPeca();
 	GeraPeca(peca);
 	for(i=0;i<5;i++)
@@ -39,6 +39,92 @@ void TesteCorPecaDiferente (void){
 	LiberaPeca(peca2);
 }
 
+
+void TestaColisaoParede(void){ // testa colisao quando a peca excede o limite da tela
+
+	TipoTela tela[15][25];
+	TipoPeca *peca;
+	int colisao =0;
+
+
+	CriarTela(tela);
+	peca = AlocaPeca();
+	GeraPecaEspecifica(peca, 3, 0); // peca de indice 3, rotacao 0
+
+	//colisao à parede esquerda
+	MovePecaX (peca, -2); // excede limite à esquerda em 1 unidade (ver peca)
+	MovePecaY (peca, 0);
+	
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_TRUE(colisao);
+	//colisao à parede direita
+	MovePecaX (peca, 22); // excede limite à direita em 1 unidade (ver peca)
+	MovePecaY (peca, 0);
+	
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_TRUE(colisao);
+	//colisao acima
+	MovePecaX (peca, 0); 
+	MovePecaY (peca, -2); // excede limite acima em 1 unidade (ver peca)
+	
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_TRUE(colisao);
+	//colisao abaixo
+	MovePecaX (peca, 0); 
+	MovePecaY (peca, 12); // excede limite acima em 1 unidade (ver peca)
+	
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_TRUE(colisao);
+
+	CU_ASSERT_TRUE(colisao);
+	//nao colide com nada
+	MovePecaX (peca, 0); 
+	MovePecaY (peca, 0);
+	
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_FALSE(colisao);
+	//fim testes colisao parede
+
+	LiberaPeca(peca);
+}
+
+
+void TestaColisaoBloco(void){ // testa colisao quando um bloco se sobrepoe a outro
+
+	TipoTela tela[15][25];
+	TipoPeca *peca;
+	int colisao =0;
+
+
+	CriarTela(tela);
+	peca = AlocaPeca();
+	GeraPecaEspecifica(peca, 3, 0); // peca de indice 3, rotacao 0
+	
+	MovePecaX (peca, 0); 
+	MovePecaY (peca, 0);
+
+	AddBloco(peca,tela); //copia a peca pra matriz da tela
+
+	colisao = VerificaColisao(peca, tela); // verifica se a peca colide com a matriz tela (deveria)
+
+	CU_ASSERT_TRUE(colisao);
+
+	MovePecaX (peca, 4); //desloca o bloco para onde nao colide 
+	MovePecaY (peca, 0);
+
+	colisao = VerificaColisao(peca, tela); // verifica se a peca colide com a matriz tela (deveria)
+
+	CU_ASSERT_FALSE(colisao);
+
+	LiberaPeca(peca);
+}
+
+
 void TesteLimpaLinha(void){
 	TipoTela tela[15][25];
 	int resultado=0, i,j,pont=0;
@@ -62,19 +148,6 @@ void TesteLimpaLinha(void){
 	CU_ASSERT_FALSE(resultado);	
 }
 
-void TestaTamanho(void){ // acho que este teste nao faz mais sentido
-	TipoPeca *peca;
-	int resultado=0, tam;
-	peca = AlocaPeca();
-	GeraPeca(peca);
-	tam=PecaGetTamanhoX(peca);
-
-	if (tam>=3 && tam<=5){
-		resultado=1;
-	}
-	CU_ASSERT_TRUE(resultado);
-	LiberaPeca(peca);
-}
 
 void  AdicionarSuite(void){
 	CU_pSuite suite;
@@ -84,7 +157,8 @@ void  AdicionarSuite(void){
 	CU_ADD_TEST(suite, TesteCorPecaCorFundo);
 	CU_ADD_TEST(suite, TesteCorPecaDiferente);
 	CU_ADD_TEST(suite, TesteLimpaLinha);
-	CU_ADD_TEST(suite, TestaTamanho);
+	CU_ADD_TEST(suite, TestaColisaoParede);
+	CU_ADD_TEST(suite, TestaColisaoBloco);
 }
 
 int main(){

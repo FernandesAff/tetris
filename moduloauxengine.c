@@ -13,7 +13,7 @@ void CriaAleatorio(TipoTela tela[][25], int numLinhas, float probabilidade){
 	srand(time(NULL));
 	for(i=14;i>=14-numLinhas;i--){
 		for (j=0;j<25;j++){
-			if (int (rand()%101<(probabilidade*100))) insere(&tela[i][j]);
+			if (  ((float)(rand()%101))  <(probabilidade*100)) Insere(&tela[i][j]);
 			}
 		}
 }

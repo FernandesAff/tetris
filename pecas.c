@@ -17,7 +17,7 @@ struct TipoPeca{
 	TipoTela pecas[TAMANHO_Y][TAMANHO_X];
 	int x;
 	int y;
-	int orient;	/************* apagar ? ***************/
+	int speed;
 };
 
 
@@ -108,7 +108,10 @@ void EnquadraPeca(TipoPeca *peca){
 
 }
 
-
+void SpeedUp(TipoPeca *peca, int multiplicador){
+	if (peca->speed < 50) 	
+		peca-> speed *= multiplicador; 
+}
 
 void RotacionaPeca(TipoPeca *peca){
 	
@@ -178,7 +181,35 @@ void GeraPeca(TipoPeca *ponteiroPeca){
 
 	ponteiroPeca-> x=10; //centraliza a peca
 	ponteiroPeca-> y=0;
-	ponteiroPeca-> orient = 0;
+	ponteiroPeca-> speed = 1;
+	
+	CopiaDaMatrizDePecas(MATRIZ_DE_PECAS[indicePeca],ponteiroPeca->pecas);
+
+	switch (direcao){
+		case(0): //nao rotaciona
+			break;
+		case(1):// rotaciona 1x
+			RotacionaPeca(ponteiroPeca);
+			break;
+		case(2):// rotaciona 2x  ...
+			RotacionaPeca(ponteiroPeca);
+			RotacionaPeca(ponteiroPeca);
+			break;
+		case(3):
+			RotacionaPeca(ponteiroPeca);
+			RotacionaPeca(ponteiroPeca);
+			RotacionaPeca(ponteiroPeca);
+			break;
+		}
+
+
+}
+
+void GeraPecaEspecifica(TipoPeca *ponteiroPeca, int indicePeca, int direcao){
+
+	ponteiroPeca-> x=10; //centraliza a peca
+	ponteiroPeca-> y=0;
+	ponteiroPeca-> speed = 1;
 	
 	CopiaDaMatrizDePecas(MATRIZ_DE_PECAS[indicePeca],ponteiroPeca->pecas);
 
@@ -236,13 +267,19 @@ int PecaGetY(TipoPeca *peca){
 	return peca->y;
 	}
 
-int PecaGetOrient(TipoPeca *peca){
-	return peca->orient;
+int PecaGetSpeed(TipoPeca *peca){
+	return peca->speed;
 	}
+
+void PecaSetSpeed(TipoPeca *peca, int sp){
+	peca->speed = sp;
+}
 
 TipoPeca *AlocaPeca(){
 	TipoPeca *novaPeca = malloc(sizeof(TipoPeca));
-	
+	novaPeca-> x = 0;
+	novaPeca-> y = 0;
+	novaPeca-> speed = 0;
 	return novaPeca;
 	}
 

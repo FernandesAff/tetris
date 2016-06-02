@@ -13,6 +13,7 @@ TipoPeca *AlocaPeca();
 void LiberaPeca(TipoPeca*);
 void CopiaPeca(TipoPeca*, TipoPeca*);
 void GeraPeca (TipoPeca *); //gera peca aleatoriamente sobre um dado ponteiro TipoPeca
+void GeraPecaEspecifica(TipoPeca *, int, int); //gera peca especifica, para teste 
 void MovePecaX (TipoPeca *, int);
 void MovePecaY (TipoPeca *, int);
 void RotacionaPeca(TipoPeca*);

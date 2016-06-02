@@ -164,11 +164,11 @@ int PegaInput(){ //corrigir para as setas
 }
 
 
-int Temporizador(int milissegundos, int *acelera){
+int Temporizador(int milissegundos, TipoPeca * peca){
 	int constante = CLOCKS_PER_SEC/1000;
 	int input;
 
-	if (*acelera) milissegundos /=2 ;
+	milissegundos /= PecaGetSpeed(peca) ;
 	while(((int)clock() - globalTempo) < milissegundos * constante){
 		input = PegaInput();
 		if(input!=-1) break;
@@ -192,7 +192,6 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	    pontuacao=0,
 	    flagDesce=1,
 	    input=-1,
-	    flagAcelera = 0,
 	    tempoInicio,
 	    tempoDecorrido=0,
 	    *apelido;
@@ -228,16 +227,15 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 		prevX=x;
 		prevY=y;	
 		MostrarTela(tela,pontuacao,tempoDecorrido); //desenha
-		input = Temporizador(1000, &flagAcelera);
-		tempoDecorrido=(globalTempo-tempoInicio)/1000000;
+		input = Temporizador(1000, pecaAgora);
+		tempoDecorrido=(globalTempo-tempoInicio)/CLOCKS_PER_SEC;
 		switch(input){
 			case ESQUERDA:
 				x--;
 				break;
 
 			case BAIXO: 
-				flagAcelera = 1;
-				//flagDesce = 1;
+				SpeedUp(pecaAgora,2);
 				break;
 
 			case DIREITA: 
@@ -255,7 +253,6 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 			
 			default:
 				flagDesce = 1 ;
-				flagAcelera = 0;
 				break;
 				
 		}	
