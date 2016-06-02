@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include "tela.h"
+#include "ranking.h"
 
 
 void SetPecaCor(TipoTela* pecaDada, int corAferida){
@@ -56,14 +57,6 @@ void InicioTela(){
 	mvhline(18, 3, ACS_HLINE, 25);
 	mvvline(3, 2, ACS_VLINE, 15);
 	mvvline(3,28, ACS_VLINE, 15);
-
-	move(19,3);
-	printw("APERTE UMA TECLA PARA INICIAR");
-
-	curs_set(0);
-	getch();
-	clear();
-
 }
 
 void CriarTela(TipoTela tela[][25]){
@@ -77,13 +70,15 @@ void CriarTela(TipoTela tela[][25]){
 	}	
 }
 
-void MostrarTela(TipoTela tela[][25], int pontos){
+void MostrarTela(TipoTela tela[][25], int pontos, int tempoDecorrido){
 	int i,j;
 
 	bkgd(COLOR_PAIR(1));
 
 	move(1,3);
 	printw("Pontuação:%d", pontos);
+	move(1,20);
+	printw("Tempo:%d",tempoDecorrido);
 	mvaddch(8, 0, '=');
 	mvaddch(8, 1, ACS_RARROW);
 	mvaddch(8, 29, ACS_LARROW);
@@ -108,31 +103,62 @@ void MostrarTela(TipoTela tela[][25], int pontos){
 }
 
 void FimTela(int pontos){
-	int i, j;
+	int i;
+	FILE *fp;
+	TipoJogador jogador;
+
+	fp=fopen(ARQUIVO, "r");
 	bkgd(COLOR_PAIR(8));
 
 	move(1,3);
 	printw("Pontuação:%d", pontos);
 
-	for(i=0;i<15;i++){
-		for (j=0;j<25;j++){
-			mvaddch(i+3,j+3,'*'); 
-		}
-	}
-
 	mvaddch(2, 2, ACS_ULCORNER);
-	mvaddch(2, 28, ACS_URCORNER);
-	mvaddch(18, 2, ACS_LLCORNER);
-	mvaddch(18, 28, ACS_LRCORNER);
-	mvhline(2, 3, ACS_HLINE, 25);
-	mvhline(18, 3, ACS_HLINE, 25);
-	mvvline(3, 2, ACS_VLINE, 15);
-	mvvline(3,28, ACS_VLINE, 15);
+	mvhline(2, 3, ACS_HLINE, 29);
+	mvaddch(2, 32, ACS_URCORNER);
+	
+	mvvline(3, 2, ACS_VLINE, 1);
+	mvvline(3,32, ACS_VLINE, 1);
+	move(3,14);
+	printw("RANKING");
+	mvaddch(4, 2, ACS_LTEE);
+	mvhline(4, 3, ACS_HLINE, 29);
+	mvaddch(4, 32, ACS_RTEE);
 
-	move(19,9);
+	mvvline(5, 2, ACS_VLINE, 1);
+	mvvline(5,32, ACS_VLINE, 1);
+	move(5,3);
+	printw("APELIDO PONTOS DATA     TEMPO");
+	mvaddch(6, 2, ACS_LTEE);
+	mvhline(6, 3, ACS_HLINE, 29);
+	mvaddch(6, 32, ACS_RTEE);
+	
+	for(i=0;i<10;i+=2){
+		mvvline(7+i, 2, ACS_VLINE, 1);
+		mvvline(7+i,32, ACS_VLINE, 1);
+		if(fscanf(fp,"%s %d %d/%d/%d %d\n", jogador.apelido, &jogador.pontos, &jogador.dia, &jogador.mes, &jogador.ano, &jogador.tempo)!=EOF){
+			mvaddstr(7+i, 3, jogador.apelido);
+			move(7+i,11);
+			printw("%d",jogador.pontos);
+			move(7+i,18);
+			printw("%d/%d/%d",jogador.dia, jogador.mes, jogador.ano-2000);
+			move(7+i,27);
+			printw("%d",jogador.tempo);
+		}	
+		mvaddch(8+i, 2, ACS_LTEE);
+		mvhline(8+i, 3, ACS_HLINE, 29);
+		mvaddch(8+i, 32, ACS_RTEE);
+	}	
+
+	mvvline(17, 2, ACS_VLINE, 1);
+	mvvline(17,32, ACS_VLINE, 1);
+	move(17,12);
 	printw("FIM DE JOGO");
+	mvaddch(18, 2, ACS_LLCORNER);
+	mvhline(18, 3, ACS_HLINE, 29);
+	mvaddch(18, 32, ACS_LRCORNER);
 
+	fclose(fp);
 	getch();
 	clear();
-
 }

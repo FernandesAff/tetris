@@ -12,7 +12,7 @@ typedef struct {
 
 void InicioTela();
 void CriarTela(TipoTela [][25]);
-void MostrarTela(TipoTela [][25], int);
+void MostrarTela(TipoTela [][25], int, int);
 void SetPecaCor(TipoTela*,int);  // atribui cor à peca
 void SetPecaCaractere(TipoTela*,char); // atribui o caractere à peca
 void SetPeca(TipoTela*, char, int); //atribui a cor e o caractere

@@ -8,6 +8,7 @@
 #include "tela.h"
 #include "pecas.h"
 #include "time.h"
+#include "ranking.h"
 
 #ifdef TEST_MODE
 	#include "moduloauxengine.h"
@@ -191,8 +192,13 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	    pontuacao=0,
 	    flagDesce=1,
 	    input=-1,
-	    flagAcelera = 0;
+	    flagAcelera = 0,
+	    tempoInicio,
+	    tempoDecorrido=0,
+	    *apelido;
 
+	TipoJogador jogador;
+	
 	TipoPeca *pecaAgora = AlocaPeca(),
 		 *pecaAntes = AlocaPeca();
 
@@ -201,23 +207,29 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	#endif
 
 	initscr();
-	InicioTela();
 	cbreak();
-	noecho();
+	curs_set(0);
 	keypad(stdscr, TRUE);
-	timeout(0);
+	InicioTela();
+	apelido=ReceberApelido();
+	clear();
+	noecho();
+	nodelay(stdscr, TRUE);
 
 	GeraPeca (pecaAgora); //cria aleatoriamente
 	PoePecaNoTopo(pecaAgora, tela);
 	x=PecaGetX(pecaAgora); y=PecaGetY(pecaAgora);
 	AddBloco(pecaAgora, tela); //aplica à matriz
+	tempoInicio = (int)clock ();
+	globalTempo = tempoInicio;
 
 	while (sair==0){
 		CopiaPeca(pecaAgora,pecaAntes);
 		prevX=x;
 		prevY=y;	
-		MostrarTela(tela,pontuacao); //desenha
+		MostrarTela(tela,pontuacao,tempoDecorrido); //desenha
 		input = Temporizador(1000, &flagAcelera);
+		tempoDecorrido=(globalTempo-tempoInicio)/1000000;
 		switch(input){
 			case ESQUERDA:
 				x--;
@@ -285,22 +297,28 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 				colisaoVertical=0;
 				}
 		}
-		
-
 		if (sair==1) { //mostra o momento de derrota 
 			//pinta os blocos de vermelho dramático
-			for(x=0;x<TAMANHOTELAX;x++)
-				for(y=0;y<TAMANHOTELAY;y++)
+			for(x=0;x<TAMANHOTELAX;x++){
+				for(y=0;y<TAMANHOTELAY;y++){
 					if(VerificaSeBloco(tela[y][x]))SetPecaCor(&tela[y][x],CORVERMELHO);
-			 //desenha a tela, pela ultima vez :(
-			MostrarTela(tela,pontuacao);
-			getch();  
+				}
+			}//desenha a tela, pela ultima vez :(
+			nodelay(stdscr, FALSE);
+			MostrarTela(tela,pontuacao,tempoDecorrido);
+			getch();
 			}
 		clear();
 	}
 	LiberaPeca(pecaAgora);
 	LiberaPeca(pecaAntes);
- 	FimTela(pontuacao);
+	ReceberData(&jogador);
+	jogador.pontos=pontuacao;
+	jogador.tempo=tempoDecorrido;
+	ConverterApelido(apelido,&jogador);
+	if(VerificaPlacar())AtualizaPlacar(jogador);
+	else CriaPlacar(jogador);
+	FimTela(pontuacao);
 	endwin();
 
 return(0);
