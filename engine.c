@@ -9,12 +9,9 @@
 #include "pecas.h"
 #include "time.h"
 #include "ranking.h"
+#define TEST_MODE
 
-#ifdef TEST_MODE
-	#include "moduloauxengine.h"
-#endif
-
-int globalTempo;
+static int globalTempo = 0; //armazena o tempo de jogo decorrido a cada ciclo
 
 enum comandos{
 	ESQUERDA,
@@ -27,7 +24,7 @@ enum comandos{
 int VerificaMorte(TipoTela tela[][25]){
 	int i;
 	
-	for (i=0; i<TAMANHOTELAX-1;i++){
+	for (i=0; i<TAMANHOTELAX;i++){
 		if (VerificaSeBloco(tela[5][i]))
 		return(1);
 		}	
@@ -165,19 +162,38 @@ int PegaInput(){ //corrigir para as setas
 }
 
 
-int Temporizador(int milissegundos, TipoPeca * peca){
+int Temporizador(int milissegundos, TipoPeca * peca, int *flagDesce){
+/*	consta aqui o loop que cordena o tempo do jogo.
+*	Ha tres motivos para o jogo sair deste loop e realizar
+*	alguma açao. a primeira é: alguma tecla válida
+*	foi pressionada, segunda: é chegada a hora da 
+*	peça descer. E por último: o "tempo de jogo" nao é
+*	mais o mesmo e precisa ser redesenhado na tela.
+*/
 	int constante = CLOCKS_PER_SEC/1000;
 	int input;
+	static int tempo;
 
 	milissegundos /= PecaGetSpeed(peca) ;
-	while(((int)clock() - globalTempo) < milissegundos * constante){
+
+	//enquanto o tempo de descer nao chega
+	while(((int)clock() - tempo) < milissegundos * constante){
 		input = PegaInput();
-		if(input!=-1) break;
+		//sai caso o alguma tecla valida foi pressionada
+		if(input!=-1) 
+			break;
+		//sai caso o tempo deva ser mudado
+		if(globalTempo!= (int)clock()/CLOCKS_PER_SEC){
+			break;
+			}
 	}
-	if (((int)clock() - globalTempo) >= milissegundos * constante) {
-		globalTempo = (int)clock ();
+	//caso o tempo de descer tenha chegado, atualiza o valor do tempo base
+	if (((int)clock() - tempo) >= milissegundos * constante) {
+		tempo = (int)clock ();
 		input =-1;
+		*flagDesce = 1;
 		}
+
 	return input;
 };
 
@@ -193,18 +209,12 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	    pontuacao=0,
 	    flagDesce=0,
 	    input=-1,
-	    tempoInicio,
-	    tempoDecorrido=0,
 	    *apelido;
 
 	TipoJogador jogador;
 	
 	TipoPeca *pecaAgora = AlocaPeca(),
 		 *pecaAntes = AlocaPeca();
-
-	#ifdef TEST_MODE	
-		criaaleatorio(tela, 2, 0.6);
-	#endif
 
 	initscr();
 	cbreak();
@@ -216,20 +226,18 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	noecho();
 	nodelay(stdscr, TRUE);
 
-	GeraPecaEspecifica (pecaAgora); //cria aleatoriamente
+	GeraPeca(pecaAgora); //cria aleatoriamente
 	PoePecaNoTopo(pecaAgora, tela);
 	x=PecaGetX(pecaAgora); y=PecaGetY(pecaAgora);
 	AddBloco(pecaAgora, tela); //aplica à matriz
-	tempoInicio = (int)clock ();
-	globalTempo = tempoInicio;
 
 	while (sair==0){
 		CopiaPeca(pecaAgora,pecaAntes);
 		prevX=x;
 		prevY=y;	
-		MostrarTela(tela,pontuacao,tempoDecorrido); //desenha
-		input = Temporizador(1000 /*1000 mSec*/, pecaAgora);
-		tempoDecorrido=(globalTempo-tempoInicio)/CLOCKS_PER_SEC;
+		MostrarTela(tela,pontuacao,globalTempo); //desenha
+		input = Temporizador(1000 /*1000 mSec*/, pecaAgora, &flagDesce);
+		globalTempo=clock()/CLOCKS_PER_SEC;
 
 		switch(input){
 			case ESQUERDA:
@@ -254,7 +262,6 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 				break;
 			
 			default:
-				flagDesce = 1 ;
 				break;
 				
 		}	
@@ -304,7 +311,7 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 				}
 			}//desenha a tela, pela ultima vez :(
 			nodelay(stdscr, FALSE);
-			MostrarTela(tela,pontuacao,tempoDecorrido);
+			MostrarTela(tela,pontuacao,globalTempo);
 			getch();
 			}
 		clear();
@@ -313,7 +320,7 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	LiberaPeca(pecaAntes);
 	ReceberData(&jogador);
 	jogador.pontos=pontuacao;
-	jogador.tempo=tempoDecorrido;
+	jogador.tempo=globalTempo;
 	ConverterApelido(apelido,&jogador);
 	if(VerificaPlacar())AtualizaPlacar(jogador);
 	else CriaPlacar(jogador);

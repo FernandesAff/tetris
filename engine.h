@@ -6,6 +6,7 @@
 
 int VerificaMorte(TipoTela [][25]);
 int VerificaColisao(TipoPeca *, TipoTela [][25]);
+void PoePecaNoTopo(TipoPeca *, TipoTela [][25]);
 void DeletaBloco(TipoTela *);
 void AddBloco(TipoPeca *,TipoTela [][25]);
 void RemoveBloco(TipoPeca *,TipoTela [][25]);
