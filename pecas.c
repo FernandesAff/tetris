@@ -75,39 +75,6 @@ static char MATRIZ_DE_PECAS [NUM_PECAS][TAMANHO_Y][TAMANHO_X] =
 	}
 };
 
-
-void EnquadraPeca(TipoPeca *peca){
-	int i=0,
-	    j=0,
-	    taVago=1;
-	
-	TipoTela vazio;
-	
-	vazio.peca = V;
-	vazio.cor = COR_FUNDO;
-
-	do{
-		for(i=0;i<5;i++)
-			if (VerificaSeBloco(peca->pecas[0][i])) {
-				taVago =-1;
-				break;
-				}
-		
-
-		if (taVago==1){
-			for(i=0;i<4;i++)
-				for(j=0;j<5;j++){
-				peca->pecas[i][j]=peca->pecas[i+1][j];
-				}
-
-			for(j=0;j<5;j++) peca->pecas[4][j]=vazio;
-		}						
-		
-
-	}while(taVago != -1);
-
-}
-
 void SpeedUp(TipoPeca *peca, int multiplicador){
 	if (peca->speed < 50) 	
 		peca-> speed *= multiplicador; 
@@ -129,7 +96,6 @@ void RotacionaPeca(TipoPeca *peca){
 		}		
 	}
 	LiberaPeca(pecaAux);
-	//EnquadraPeca(peca);
 }
 
 
@@ -286,43 +252,6 @@ TipoPeca *AlocaPeca(){
 void LiberaPeca(TipoPeca* peca){
 	free(peca);
 	}
-
-int PecaGetTamanhoX(TipoPeca *peca){
-	int tamanho=0,
-	    tamanhoMax=0,
-	    i,
-	    j;
-
-	for (i=0; i<TAMANHO_Y; i++){
-		for (j=0; j<TAMANHO_X; j++){
-			if( VerificaSeBloco(PecaGetBloco(peca,i,j)) )
-				tamanho=j;
-			}
-		if (tamanho>tamanhoMax) tamanhoMax=tamanho;
-		if (tamanho == TAMANHO_X) break;  
-		}
-
-	return tamanhoMax;
-	}
-
-int PecaGetTamanhoY(TipoPeca *peca){
-	int tamanho=0,
-	    tamanhoMax=0,
-	    i,
-	    j;
-
-	for (j=0; j<TAMANHO_X; j++){
-		for (i=0; i<TAMANHO_Y; i++){
-			if( VerificaSeBloco(PecaGetBloco(peca,i,j)) )
-				tamanho=i;
-			}
-		if (tamanho>tamanhoMax) tamanhoMax=tamanho;
-		if (tamanho == TAMANHO_X) break;  
-		}
-
-	return tamanhoMax;
-	}
-
 
 void MovePecaX (TipoPeca *targetPeca, int inputX){
 	targetPeca->x=inputX;

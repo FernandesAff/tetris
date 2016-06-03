@@ -18,8 +18,6 @@ void MovePecaX (TipoPeca *, int);
 void MovePecaY (TipoPeca *, int);
 void RotacionaPeca(TipoPeca*);
 int PecaGetCor(TipoPeca*);
-int PecaGetTamanhoX(TipoPeca*); //retorna tamanho horizontal maximo
-int PecaGetTamanhoY(TipoPeca*); //retorna tamanho horizontal maximo
 int PecaGetX(TipoPeca*);
 int PecaGetY(TipoPeca*);
 int PecaGetOrient(TipoPeca*);

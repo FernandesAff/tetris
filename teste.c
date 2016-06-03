@@ -8,6 +8,16 @@
 #include "engine.h"
 #include "pecas.h"
 
+void TesteAlocaPeca (void){
+	int flagNulo = 0;
+	TipoPeca *peca;
+	peca = AlocaPeca();
+	if (peca == NULL) flagNulo = 1;
+	CU_ASSERT_FALSE(flagNulo);
+
+	LiberaPeca(peca);
+}
+
 void TesteCorPecaCorFundo (void){
 	TipoPeca *peca;
 	int resultado=0, i,j;
@@ -40,6 +50,33 @@ void TesteCorPecaDiferente (void){
 }
 
 
+void TestaMorte(void){
+	int morte = 0,
+	    i = 0,
+	    j = 0;
+	
+	TipoTela tela[15][25];
+	TipoTela bloco;
+	bloco.cor = 5;
+	bloco.peca = '0';
+
+	CriarTela(tela);
+
+	morte = VerificaMorte(tela);
+	
+	CU_ASSERT_FALSE(morte);
+
+	for(i=15; i>=5; i--)
+		tela[i][14] = bloco;
+
+	morte = VerificaMorte(tela);
+
+	CU_ASSERT_TRUE(morte);
+
+
+}
+
+
 void TestaColisaoParede(void){ // testa colisao quando a peca excede o limite da tela
 
 	TipoTela tela[15][25];
@@ -58,6 +95,7 @@ void TestaColisaoParede(void){ // testa colisao quando a peca excede o limite da
 	colisao = VerificaColisao(peca, tela);
 
 	CU_ASSERT_TRUE(colisao);
+
 	//colisao à parede direita
 	MovePecaX (peca, 22); // excede limite à direita em 1 unidade (ver peca)
 	MovePecaY (peca, 0);
@@ -117,7 +155,7 @@ void TestaColisaoBloco(void){ // testa colisao quando um bloco se sobrepoe a out
 	MovePecaX (peca, 4); //desloca o bloco para onde nao colide 
 	MovePecaY (peca, 0);
 
-	colisao = VerificaColisao(peca, tela); // verifica se a peca colide com a matriz tela (deveria)
+	colisao = VerificaColisao(peca, tela);
 
 	CU_ASSERT_FALSE(colisao);
 
@@ -127,12 +165,17 @@ void TestaColisaoBloco(void){ // testa colisao quando um bloco se sobrepoe a out
 
 void TesteLimpaLinha(void){
 	TipoTela tela[15][25];
-	int resultado=0, i,j,pont=0;
+	int resultado = 0, 
+	    i = 0,
+	    j = 0,
+	    pont = 0;
 
 	CriarTela(tela);
-	for(i=0;i<25;i++){
-		tela[7][i].peca='0';
-		tela[7][i].cor=5;
+	for(j=0;j<15;j++){
+		for(i=0;i<25;i++){
+			tela[7][i].peca='0';
+			tela[7][i].cor=5;
+		}
 	}
 
 	DeletaLinhas(tela, &pont);
@@ -149,16 +192,19 @@ void TesteLimpaLinha(void){
 }
 
 
+
 void  AdicionarSuite(void){
 	CU_pSuite suite;
 	
 	suite = CU_add_suite("Testes de datas e nomes",NULL,NULL);
-	
+
+	CU_ADD_TEST(suite, TesteAlocaPeca);	
 	CU_ADD_TEST(suite, TesteCorPecaCorFundo);
 	CU_ADD_TEST(suite, TesteCorPecaDiferente);
 	CU_ADD_TEST(suite, TesteLimpaLinha);
 	CU_ADD_TEST(suite, TestaColisaoParede);
 	CU_ADD_TEST(suite, TestaColisaoBloco);
+	CU_ADD_TEST(suite, TestaMorte);
 }
 
 int main(){
