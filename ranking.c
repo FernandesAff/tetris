@@ -84,6 +84,7 @@ int VerificaPlacar(){
 		return 0;
 	}	
 	else{
+		fclose(fp);
 		return 1;
 	}	
 }	

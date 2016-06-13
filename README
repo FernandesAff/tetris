@@ -1,6 +1,9 @@
 Para a compilação o programa basta digitar "make" no terminal e o makefile produzirá dois arquivos executáveis.
+
+Para o uso da ferramenta "splint" digite "make splint" (observe que alguns warnings serão apresentados. O motivo desses erros é que o splint interpreta que deve-se definir completamente uma matriz antes de passá-la a uma função, entretanto na implementação desse jogo, utilizamos funções para definir uma matriz criada, além disso, o splint reconhece a presença de duas funções "main", entretanto, pode-se observar através do makefile que essas duas mains, uma no main.c e outra no teste.c nunca são compiladas conjuntamente, portanto estes warnings podem ser ignorados).
+
 Para executar o jogo abra o terminal na pasta onde está os arquivos do jogo e digite ./programa
-Para executar o programa de testes digite ./teste , ele apresentará os testes executados pelo CUnit e os resultados. 
+Para executar o programa de testes digite ./teste_gcov , ele apresentará os testes executados pelo CUnit e os resultados. 
 Lembre-se de ter versão correta da biblioteca do CUnit na pasta contendo os arquivos do jogo, será enviada uma pasta com a biblioteca para computadores 64bits.
 Todos os testes foram executados em computadores com Ubuntu 15.10 versão 64 bits
 

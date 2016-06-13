@@ -243,18 +243,12 @@ int PecaGetSpeed(TipoPeca *peca){
 	return peca->speed;
 	}
 
-void PecaSetSpeed(TipoPeca *peca, int sp){
-	peca->speed = sp;
-}
-
 TipoPeca *AlocaPeca(){
-
 
 	TipoPeca *novaPeca = malloc(sizeof(TipoPeca));
 	novaPeca-> x = 0;
 	novaPeca-> y = 0;
 	novaPeca-> speed = 0;
-
 	
 
 	return novaPeca;

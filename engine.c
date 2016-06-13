@@ -1,3 +1,11 @@
+/**************** ENGINE *******************
+* consta aqui todo o código necessário para
+* o funcionamento completo do jogo. Este mó-
+* dulo implementa o funcionamento mecânico 
+* do jogo e agrega os demais conceitos imple-
+* mentados pelos outros módulos.
+********************************************/
+
 #define TAMANHOTELAY 15
 #define TAMANHOTELAX 25 
 #define CORVERMELHO 4
@@ -12,7 +20,7 @@
 #include "engine.h"
 #define TEST_MODE
 
-static int globalTempo = 0; //armazena o tempo de jogo decorrido a cada ciclo
+static int globalTempo = 0; //global que armazena o tempo de jogo decorrido
 
 enum comandos{
 	ESQUERDA,
@@ -22,7 +30,8 @@ enum comandos{
 	SAIR
 } com;
 
-int VerificaMorte(TipoTela tela[][25]){
+//funcao que verifica se há algum bloco na posição 5
+int VerificaMorte(TipoTela tela[][25]){ 
 	int i;
 	
 	for (i=0; i<TAMANHOTELAX;i++){
@@ -136,7 +145,8 @@ void DeletaLinhas(TipoTela tela[][TAMANHOTELAX],int *pontuacao){
 	}
 }
 
-int PegaInput(){ //corrigir para as setas
+int PegaInput(){ //funcao que atribui os determinados comandos de acordo com as teclas pressionadas
+
 	int input;
 	
 	switch(getch()){
@@ -173,7 +183,7 @@ int Temporizador(int milissegundos, TipoPeca * peca, int *flagDesce){
 */
 	int constante = CLOCKS_PER_SEC/1000;
 	int input;
-	static int tempo;
+	static int tempo; //static para que o valor se altere a cada vez que essa funcao é chamada
 
 	milissegundos /= PecaGetSpeed(peca) ;
 
@@ -200,6 +210,13 @@ int Temporizador(int milissegundos, TipoPeca * peca, int *flagDesce){
 
 
 int Loop(TipoTela tela[][TAMANHOTELAX]){
+/*	Consta nessa função o loop que deve ser percorrido
+*	a cada vez que uma ação deva ser realizada (atuali-
+*	zação do tempo, mover peça,[..]), bem como a inter-
+*	pretação dos inputs e as decisões que devem ser to-
+*	madas pela engine.
+*/
+
 	int rotaciona=0,
 	    sair=0,
 	    x=0,
@@ -271,36 +288,47 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 			y++;
 			flagDesce = 0;
 			}
-
-		RemoveBloco(pecaAgora,tela); //remove peca do tetris da matriz tela
-		MovePecaX(pecaAgora,x);    // atribui as propriedades de posicao
+		//remove peca do tetris da matriz tela
+		RemoveBloco(pecaAgora,tela); 
+		//atribui as propriedades de posicao
+		MovePecaX(pecaAgora,x);
 		MovePecaY(pecaAgora,y);
 		if (rotaciona){
 			RotacionaPeca(pecaAgora);
 			rotaciona = 0;
 			}
 
-		if (!VerificaColisao(pecaAgora,tela)) //verifica se nao está colidindo
-			AddBloco(pecaAgora, tela);    //e atualiza a peca
-			
-		else{    //caso esteja colidindo
-			if (y>prevY) { //se verdedairo significa que houve uma colisao no eixo y
-				FlagcolisaoVertical=1; //flag para fixar a peca e tomar as medidas necessarias
+		//verifica se não está colidindo
+		if (!VerificaColisao(pecaAgora,tela))
+			//atualiza peça
+			AddBloco(pecaAgora, tela);  
+		//se estiver colidindo:
+		else{
+			//se houver uma colisao no eixo y
+			if (y>prevY) { 
+				//flag para fixar a peca e tomar as medidas necessarias
+				FlagcolisaoVertical=1; 
 				}
-			x=prevX; //retorna a posicao x anterior, impedindo as sobreposicoes
+			//retorna a posicao x anterior, impedindo as sobreposicoes
+			x=prevX; 
 			y=prevY;
 			CopiaPeca(pecaAntes,pecaAgora);
-			AddBloco(pecaAgora, tela); //atribui à matriz tela
+			//atribui à matriz tela
+			AddBloco(pecaAgora, tela);
 
 			if (FlagcolisaoVertical) {
-				DeletaLinhas(tela, &pontuacao); //verifica se alguma linha foi completada
+				//verifica se alguma linha foi completada
+				DeletaLinhas(tela, &pontuacao); 
+				//morre se ha algum bloco na posicao y=5
 				if (VerificaMorte(tela)) 
-					sair=1;			//morre se ha algum bloco na posicao y=5 <------------------
-				GeraPeca (pecaAgora); //cria aleatoriamente
+					sair=1;		
+				//cria nova peca aleatoriamente	 
+				GeraPeca (pecaAgora);
 				PoePecaNoTopo(pecaAgora, tela);
 				x=PecaGetX(pecaAgora); y=PecaGetY(pecaAgora);
 				if (sair!=1) 
-					AddBloco(pecaAgora, tela); // desenha só se nao tiver morrido
+					// desenha só se nao tiver morrido
+					AddBloco(pecaAgora, tela);
 				FlagcolisaoVertical=0;
 				}
 		}

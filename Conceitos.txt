@@ -2,22 +2,23 @@
 * TRABALHO DE PROGRAMAÇÃO SISTEMÁTICA: IMPLEMENTAÇÃO DO 
 *			JOGO "TETRIS".
 *
-*    Alunos: Cristóvão Bartholo, André Fernandes, etc.
+* Alunos: Cristóvão B. Gomes, André Fernandes,
+*
 ***********************************************************
 * Este documento visa mostrar o conceito e soluções abor-
 * dadas no desenvolvimento do programa, bem como explicitar
 * as etapas e as abstrações desenvolvidas para a solução do
 * problema proposto.
-*
 ***********************************************************
 
 Problema: O programa visa a implementacão do jogo "tetris".
 ___________________________________________________________
-Podemos então dividir o problema em três módulos:
+Podemos então dividir o problema em quatro módulos base:
 
 - Tela;
 - Peças;
-- Engine.
+- Engine;
+- Ranking.
 ___________________________________________________________
 Cada módulo responsabiliza-se a cumprir um conjunto de
 tarefas: 
@@ -37,12 +38,17 @@ Engine:
 processar os dados e chamar as devidas funções dos modulos
 acima especificados.
 
+Ranking:
+- lidar com as informações de cada jogador, datas, horários
+e pontuações, bem como organizá-las e salvá-las.
+
 ___________________________________________________________
 Para implementar o jogo Tetris, será necessário o uso de
 dois Tipos Abstratos de Dados (TADs):
 
 - TipoTela;
-- TipoPeca.
+- TipoPeca;
+- TipoJogador.
 
 TipoTela:
 - Menores unidades do tetris, cada unidade contém
@@ -50,24 +56,38 @@ propriedades de cor e de caracter, seria implementado no
 módulo 'tela'.
 
 TipoPeca:
-- Armazena informacões sobre uma peça. Contém uma cadeia de
-cinco caracteres do TipoTela, orientacao (posicao vertical
-ou horizontal), posicao vertical e posicao horizontal.
+- Armazena informacões sobre uma peça. É encapsulado pelo 
+módulo pecas.c .Esta estrutura armazena as informações das
+peças em uma matriz do tipo TipoTela em "pecas", armazena 
+infromações da velocidade da peça num inteiro de nome
+"speed", e as posições em inteiros "x" e "y". Cabe dizer
+que as funções que lidam com os membros dessa estrutura 
+estão todas explicitadas no módulo de definição "pecas.h".
 
-Obs: Para a realização das operações das peças será
-utilizada uma matriz do TipoTela, representantando a tela 
-que será apresentada ao usuário durante o jogo.
+Obs: A telado jogo foi implementada como sendo uma matriz 
+do TipoTela, representantando a o que será apresentado ao
+usuário durante o jogo.
+
+TipoJogador:
+- Armazena apelido, pontos, dia, mes, ano e tempo de jogo.
+cada uma dessas informações será armazenada em um arquivo
+".txt".
+
 ___________________________________________________________
 Interação entre os módulos:
 
-- O módulo 'engine' é cliente de 'peças' e 'tela',
-utilizando as funcões e estruturas que cada um deles
-fornece.
+- O módulo 'engine' é cliente de 'peças', 'tela' e 'ranking'
+utilizando as funcões, TAD's e conceitos que cada um deles
+implementa.
 
 - O módulo 'peças' é cliente de 'tela', pois necessita do
 conceito do 'TipoTela' para implementar TAD 'TipoPeca'.
 
 - O módulo 'tela' é somente servidor, sendo somente cliente
+de estruturas do sistema e bibliotecas adicionais de ter-
+ceiros.
+
+- O módulo 'ranking' é somente servidor sendo somente cliente
 de estruturas do sistema e bibliotecas adicionais de ter-
 ceiros.
 ___________________________________________________________
@@ -77,60 +97,109 @@ para implementar, cada uma, uma determinada tarefa.
 
 Funcões do módulo "Tela":
 
-- inicio_tela: Responsabiliza-se a desenhar a tela de
+- InicioTela: Responsabiliza-se a desenhar a tela de
 início do jogo.
-- criar_tela: Cria a matriz do TipoTela que representa a
+- CriarTela: Cria a matriz do TipoTela que representa a
 interface do jogo.
 - mostrar_tela: Desenha a matriz que representa a interface
 do jogo.
-- set_peca_cor: atribui cor à uma unidade de peca
-- set_peca_caractere: atribui um dado caractere à unidade 
+- SetPecaPor: atribui cor à uma unidade de peca
+- SetPecaCaractere: atribui um dado caractere à unidade 
 de peca.
-- set_peca: atribui a cor e o caractere à unidade de peca
+- SetPeca: atribui a cor e o caractere à unidade de peca
 simultaneamente.
--fim_tela: Mostra a tela de fim ao final do jogo.
--verifica_se_bloco: determina se, em um elemento TipoTela,
+- FimTela: Mostra a tela de fim ao final do jogo.
+- VerificaSeBloco: determina se, em um elemento TipoTela,
 há ou não uma unidade de peça que representa um bloco,
 sendoum bloco um conceito que representa a unidade de peça
 que constitui uma peça do tetris.
 ___________________________________________________________
 Funções do módulo "Peças":
 
-- gera_peca: gera uma peça do tetris aleatoriamente.
-- move_peca_x: atribui uma dada posicao x à uma dada peca
+
+- AlocaPeca: retorna um ponteiro *TipoPeca que aponta para
+a peça que foi alocada.  
+- GeraPeca: gera uma peça do tetris aleatoriamente em um
+fornecido ponteiro já alocado. 
+- GeraPecaEspecifica: igual a anterior, mas gera uma peca
+específica desejada. Para teste de colisão, principalmente.
+- CopiaPeca: copia uma peca fornecida em outra peca
+fornecida.
+- MovePecaX: atribui uma dada posicao x à uma dada peca
 do tetris.
-- move_peca_y: atribui uma dada posicao y à uma dada peca
+- MovePecaY: atribui uma dada posicao y à uma dada peca
 do tetris.
-- get_tamanho: retorna tamanho de uma peca (quantidade de
-blocos significativos) em uma dada peca do tetris.
+- RotacionaPeca: rotaciona a matriz de uma dada peça do 
+tetris em 90 graus uma unica vez, no sentido horário.
+- SpeedUp: multiplica o atual valor de velocidade da peça
+em 'n' vezes (sendo 'n' um de seus parâmetros).
+- CopiaDaMatrizDePecas: copia uma matriz em outra, ambas de
+5x5.
+-LiberaPeca: libera peca que foi alocada por 'AlocaPeca'.
+
+Obs:
+As funções desse módulo aqui não especificadas são as do
+tipo 'get', elas retornam os valores dos campos da estrutura
+'TipoPeca' e estão especificadas no módulo de definição
+"pecas.h"
+
+
+___________________________________________________________
+Funções do módulo "Ranking":
+
+- ReceberApelido: responsabiliza-se por desenhar o texto
+especificando ao jogador para inserir seu apelido e retor-
+nar o vetor de caracteres contendo o nome especificado.
+- ConverterApelido: aplica um dado apelido em um dado
+jogador.
+- ReceberData: recebe o dia, mes e ano do sistema e aplica
+sobre um dado jogador.
+- VerificaPlacar: Verifica se existe um arquivo que contém
+os dados do placar.
+- CriaPlacar: cria um arquivo contendo o placar do primeiro
+jogador.
+- AtualizaPlacar: Atualiza o placar existente com os dados
+do novo jogador.
+
+
 ___________________________________________________________
 Funções do módulo "Engine":
 
-- pega_input: responsável por receber os inputs do teclado.
-- verificamorte: verifica se o jogo acabou, dada as especi-
+- PegaInput: responsável por receber os inputs do teclado.
+- VerificaMorte: verifica se o jogo acabou, dada as especi-
 ficações.
-- verifica_colisao: verifica se, para uma dada peça do 
-tetris (TipoPeca), uma determinada posicao dada está vaga
-ou não.
-- deletabloco: atribui propriedades de uma peça vaga a
+- VerificaColisao: verifica se a peça está se sobrepondo a
+algum bloco da matriz tela, verifica também se a peça obe-
+dece os limites da tela. Retorna um inteiro 0 caso nao es-
+teja colidindo e 0 caso esteja.
+- DeletaBloco: atribui propriedades de uma peça vaga a
 uma dada unidade de peça.
-- addbloco: atribui uma peca do tetris à matriz de tela que
+- AddBloco: atribui uma peca do tetris à matriz de tela que
 representa a interface do jogo.
-- removebloco: remove uma dada 'peca do tetris' da matriz
+- RemoveBloco: remove uma dada 'peca do tetris' da matriz
 que representa a interface do jogo. 
-- verificalinhas: verifica se há alguma linha compĺeta na
+- VerificaLinhas: verifica se há alguma linha compĺeta na
 matriz tela, se sim, especifica qual.
-- deletalinhas: com auxílio da função verificalinha, deleta
+- DeletaLinhas: com auxílio da função verificalinha, deleta
 a linha que estiver completa.
-- gravidade: funcao que simula a gravidade, após alguma
-linha ser apagada.
-- loop: funcao que une todas as demais, determina as ações 
+- Gravidade: funcao que simula a gravidade após alguma
+linha ser apagada (não tem a ver com a queda automática das
+peças)
+- PoePecaNoTopo: Como as pecas podem ter linhas superiores
+vazias se faz necessário o uso dessa função. Cabe a ela mo-
+ver a peça até que ela esteja no limite superior da tela.
+- Temporizador: Funcão que lida com o tempo do jogo, ela
+"trava" o jogo até que uma ação ocorra (input detectado, 
+tempo de descida ou tempo do jogo precisa ser redesenhado).
+- Loop: funcao que une todas as demais, determina as ações 
 a serem tomadas a cada ciclo.
 
 ***********************************************************
 Contatos: 
 - andreff@outlook.com
 - cristovao@live.com
+- 
+- 
 
 ***********************************************************
 
