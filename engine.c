@@ -217,7 +217,7 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	TipoPeca *pecaAgora = AlocaPeca(),
 		 *pecaAntes = AlocaPeca();
 
-	initscr();
+	WINDOW * window= initscr();
 	cbreak();
 	curs_set(0);
 	keypad(stdscr, TRUE);

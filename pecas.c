@@ -9,7 +9,7 @@
 #define COR_FUNDO 7
 #define B '0'
 #define V '-'
-#define NUM_PECAS 7
+#define NUM_PECAS 8
 
 
 
@@ -70,6 +70,12 @@ static char MATRIZ_DE_PECAS [NUM_PECAS][TAMANHO_Y][TAMANHO_X] =
 	 {V,V,V,V,V},
 	 {V,B,B,V,V},
 	 {V,B,B,V,V},
+	 {V,V,V,V,V},
+	 {V,V,V,V,V}
+	},{
+	 {V,V,V,V,V}, //peca vazia
+	 {V,V,V,V,V},
+	 {V,V,V,V,V},
 	 {V,V,V,V,V},
 	 {V,V,V,V,V}
 	}
@@ -140,9 +146,9 @@ void GeraPeca(TipoPeca *ponteiroPeca){
 	int indicePeca = -1,
 	    direcao = -1;
 
-	srand (time(NULL));	
-	indicePeca = rand() % NUM_PECAS;
-	srand (time(NULL));	
+	srand ((unsigned int)time(NULL));	
+	indicePeca = rand() % (NUM_PECAS - 1); //sendo a ultima peca a peca vazia
+	srand ((unsigned int)time(NULL));	
 	direcao = rand() % 4;
 
 	ponteiroPeca-> x=10; //centraliza a peca
@@ -242,11 +248,17 @@ void PecaSetSpeed(TipoPeca *peca, int sp){
 }
 
 TipoPeca *AlocaPeca(){
+
+
 	TipoPeca *novaPeca = malloc(sizeof(TipoPeca));
 	novaPeca-> x = 0;
 	novaPeca-> y = 0;
 	novaPeca-> speed = 0;
+
+	
+
 	return novaPeca;
+
 	}
 
 void LiberaPeca(TipoPeca* peca){
