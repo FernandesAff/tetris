@@ -28,5 +28,4 @@ limpa:
 	rm *.o	
 
 splint:
-	splint *.c *.h -weak -redef +infloops +compdef +sysdirerrors
-
+	splint *.c *.h 	-weak +compdef +infloops +sysdirerrors

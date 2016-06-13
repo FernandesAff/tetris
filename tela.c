@@ -45,7 +45,7 @@ void InicioTela(){
 
 	for(i=0;i<15;i++){
 		for (j=0;j<25;j++){
-			mvaddch(i+3,j+3,'*'); 
+			mvaddch(i+3,j+3,(chtype)'*'); 
 		}
 	}
 
@@ -79,10 +79,10 @@ void MostrarTela(TipoTela tela[][25], int pontos, int tempoDecorrido){
 	printw("Pontuação:%d", pontos);
 	move(1,20);
 	printw("Tempo:%d",tempoDecorrido);
-	mvaddch(8, 0, '=');
+	mvaddch(8, 0, (chtype)'=');
 	mvaddch(8, 1, ACS_RARROW);
 	mvaddch(8, 29, ACS_LARROW);
-	mvaddch(8, 30, '=');
+	mvaddch(8, 30, (chtype)'=');
 	
 	mvaddch(2, 2, ACS_ULCORNER);
 	mvaddch(2, 28, ACS_URCORNER);
@@ -96,7 +96,7 @@ void MostrarTela(TipoTela tela[][25], int pontos, int tempoDecorrido){
 	for(i=0;i<15;i++){
 		for (j=0;j<25;j++){
 			attron(COLOR_PAIR(tela[i][j].cor));
-			mvaddch(i+3,j+3, tela[i][j].peca); 
+			mvaddch(i+3,j+3, (chtype)tela[i][j].peca); 
 			attroff(COLOR_PAIR(tela[i][j].cor)); 
 		}
 	}

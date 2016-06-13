@@ -80,9 +80,9 @@ void TestaMorte(void){
 		tela[5][i] = vazio;
 		}	
 
+	//nao deve alertar morte, pois fileira [5][i] está vazia.
 	morte = VerificaMorte(tela);
 
-	//nao deve alertar morte, pois fileira [5][i] está vazia.
 	CU_ASSERT_FALSE(morte); 
 
 }
@@ -90,7 +90,7 @@ void TestaMorte(void){
 
 void TestaColisaoParede(void){ // testa colisao quando a peca excede o limite da tela
 
-	TipoTela tela[15][25];
+	TipoTela tela[15][25] ;
 	TipoPeca *peca;
 	int colisao =0;
 

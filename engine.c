@@ -9,6 +9,7 @@
 #include "pecas.h"
 #include "time.h"
 #include "ranking.h"
+#include "engine.h"
 #define TEST_MODE
 
 static int globalTempo = 0; //armazena o tempo de jogo decorrido a cada ciclo
@@ -237,7 +238,7 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 		prevY=y;	
 		MostrarTela(tela,pontuacao,globalTempo); //desenha
 		input = Temporizador(1000 /*1000 mSec*/, pecaAgora, &flagDesce);
-		globalTempo=clock()/CLOCKS_PER_SEC;
+		globalTempo=((int)clock())/CLOCKS_PER_SEC;
 
 		switch(input){
 			case ESQUERDA:
