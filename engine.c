@@ -1,10 +1,12 @@
-/**************** ENGINE *******************
-* consta aqui todo o código necessário para
-* o funcionamento completo do jogo. Este mó-
-* dulo implementa o funcionamento mecânico 
-* do jogo e agrega os demais conceitos imple-
-* mentados pelos outros módulos.
-********************************************/
+///	Gerencia o funcionamento completo do jogo. 
+///	Este módulo implementa o funcionamento mecânico
+///	do jogo e agrega os demais conceitos implementados
+///	pelos outros módulos.
+///	
+/// \file engine.c
+///	\author Cristóvão
+/// \since 11/04/16
+/// \version 2.8
 
 #define TAMANHOTELAY 15
 #define TAMANHOTELAX 25 
@@ -20,7 +22,12 @@
 #include "engine.h"
 #define TEST_MODE
 
-static int globalTempo = 0; //global que armazena o tempo de jogo decorrido
+///	Variável global que armazena o tempo de jogo decorrido.
+
+static int globalTempo = 0;
+
+/// Comandos.
+/// Enumeração dos comandos que podem ser inseridos.
 
 enum comandos{
 	ESQUERDA,
@@ -30,45 +37,66 @@ enum comandos{
 	SAIR
 } com;
 
-//funcao que verifica se há algum bloco na posição 5
-int VerificaMorte(TipoTela tela[][25]){ 
+///	Função que verifica se há algum bloco na linha limítrofe.
+///	Verifica se algum bloco atingiu o limite do jogo, ou seja,
+/// a posição 5.
+///
+///	\param tela[][TAMANHOTELAX] uma matriz que representa a
+/// tela do jogo.
+/// \return um inteiro com valor 0 ou 1 que indica se a linha de 
+/// limite foi atingida.
+
+int VerificaMorte(TipoTela tela[][TAMANHOTELAX]){ 
 	int i;
 	
 	for (i=0; i<TAMANHOTELAX;i++){
 		if (VerificaSeBloco(tela[5][i]))
 		return(1);
-		}	
+	}	
 	return(0);
-	}
+}
 
-int VerificaColisao(TipoPeca *peca, TipoTela tela[][25]){
-	int i=0, j=0, colisao=0;
+///	Função que verifica a colisão de blocos.
+/// Verifica se uma peça colidiu com algum bloco presente na tela.
+///
+/// \param *peca ponteiro para a peça atual e sua posição na tela.
+///	\param tela[][TAMANHOTELAX] uma matriz que representa a
+/// tela do jogo.
+/// \return um inteiro com valor 0 ou 1 que indica se a peça colidiu.
+
+int VerificaColisao(TipoPeca *peca, TipoTela tela[][TAMANHOTELAX]){
+	int i=0,
+		j=0, 
+		colisao=0;
 
 	//verifica colisao com parede:
 	for(i=0;i<5;i++) for(j=0;j<5;j++){
 		if (VerificaSeBloco(PecaGetBloco(peca,i,j))) {
-			     if ( (PecaGetX(peca)+j)>TAMANHOTELAX-1) colisao=1; //colide à direita
+			if ( (PecaGetX(peca)+j)>TAMANHOTELAX-1) colisao=1; //colide à direita
 			else if ((PecaGetX(peca)+j)<0) colisao=1; 		//colide à esquerda	
 			else if ( (PecaGetY(peca)+i)>TAMANHOTELAY-1) colisao=1; //colide abaixo
 			else if ((PecaGetY(peca)+i)<0) colisao=1; 		//colide acima
 		}
 	}
-	
-
 	//verifica colisao com blocos:
-	if(!colisao)
+	if(!colisao){
 		for(i=0;i<5;i++) for(j=0;j<5;j++){
-			if (VerificaSeBloco(PecaGetBloco(peca,j,i)))
-				if(VerificaSeBloco(tela[(PecaGetY(peca))+j][PecaGetX(peca)+i])) 
-					colisao=1;
+			if (VerificaSeBloco(PecaGetBloco(peca,j,i))){
+				if(VerificaSeBloco(tela[(PecaGetY(peca))+j][PecaGetX(peca)+i]))colisao=1;
 			}
-
-		
-
-	return colisao;
+		}
 	}
+	return colisao;
+}
 
-void PoePecaNoTopo(TipoPeca *peca, TipoTela tela[][25]){
+///	Função que insere uma peça na matriz da tela.
+/// Insere na parte superior da tela a peça da rodada atual do jogo.
+///
+/// \param *peca ponteiro para a peça atual.
+///	\param tela[][TAMANHOTELAX] uma matriz que representa a
+/// tela do jogo.
+
+void PoePecaNoTopo(TipoPeca *peca, TipoTela tela[][TAMANHOTELAX]){
 	int y=0;
 	TipoPeca *pecaAux = AlocaPeca();
 	CopiaPeca(peca,pecaAux);
@@ -78,37 +106,63 @@ void PoePecaNoTopo(TipoPeca *peca, TipoTela tela[][25]){
 		y--;
 		MovePecaY(pecaAux,y);
 		if (!VerificaColisao(pecaAux,tela)) CopiaPeca(pecaAux,peca);
-		}
-	LiberaPeca(pecaAux);
 	}
+	LiberaPeca(pecaAux);
+}
 
+///	Função que limpa um campo da matriz da tela.
+///
+///	\param *unidade uma posição na tela que deve ser excluída.
 
 void DeletaBloco(TipoTela *unidade){
 	SetPeca(unidade,VAZIO,CORFUNDO);
-	}
+}
 
-void AddBloco(TipoPeca *peca,TipoTela tela[][25]){
-	int i,j;
+///	Função que insere um bloco na matriz da tela.
+///
+/// \param *peca ponteiro para a peça atual e sua posição na tela.
+///	\param tela[][TAMANHOTELAX] uma matriz que representa a
+/// tela do jogo.
+
+void AddBloco(TipoPeca *peca,TipoTela tela[][TAMANHOTELAX]){
+	int i,
+		j;
 
 	for (i=0;i<5;i++) for (j=0;j<5;j++) {
 		if (VerificaSeBloco(PecaGetBloco(peca,i,j))){
 			tela[PecaGetY(peca)+i][(PecaGetX(peca))+j]=PecaGetBloco(peca,i,j);
-			}
 		}
 	}
+}
 
-void RemoveBloco(TipoPeca *peca,TipoTela tela[][25]){
-	int i, j;
+///	Função que remove um bloco da matriz da tela.
+///
+/// \param *peca ponteiro para a peça atual e sua posição na tela.
+///	\param tela[][TAMANHOTELAX] uma matriz que representa a
+/// tela do jogo.
+
+void RemoveBloco(TipoPeca *peca,TipoTela tela[][TAMANHOTELAX]){
+	int i, 
+		j;
+
 	for (i=0;i<5;i++) for (j=0;j<5;j++) {
 		if (VerificaSeBloco(PecaGetBloco(peca,i,j))){
 			DeletaBloco(&tela[PecaGetY(peca)+i][(PecaGetX(peca))+j]);
 		}
 	}
-	
 }
 
-int VerificaLinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha completa
-	int i,j, completa=1;	  //se houver, retorna a posicao y dela
+///	Função que verifica se há uma linha completa.
+///
+///	\param tela[][TAMANHOTELAX] uma matriz que representa a
+/// tela do jogo.
+/// \return a linha que está completa ou -1 caso não exista uma
+/// linha completa.
+
+int VerificaLinhas(TipoTela tela[][TAMANHOTELAX]){
+	int i,
+		j,
+		completa=1;	  //se houver, retorna a posicao y dela
 	
 	for(i=TAMANHOTELAY-1;i>=0;i--){
 		for (j=0;j<TAMANHOTELAX;j++){
@@ -123,6 +177,13 @@ int VerificaLinhas(TipoTela tela[][TAMANHOTELAX]){//verifica se ha alguma linha 
 	return(-1); //caso nenhuma linha esteja completa, retorna -1
 }
 
+///	Função que decrementa a posição de uma linha da tela.
+///
+///	\param tela[][TAMANHOTELAX] uma matriz que representa a
+/// tela do jogo.
+/// \param posicaolinha inteiro que representa a posição de uma 
+/// linha.
+
 void Gravidade(TipoTela tela[][TAMANHOTELAX],int posicaolinha){
 	int j;
 	
@@ -132,6 +193,13 @@ void Gravidade(TipoTela tela[][TAMANHOTELAX],int posicaolinha){
 		}
 	}
 }	
+
+///	Função que deleta uma linha completa na matriz da tela.
+/// Incrementa a pontuação do jogador em 100 pontos.
+///
+///	\param tela[][TAMANHOTELAX] uma matriz que representa a
+/// tela do jogo.
+/// \param *pontuacao um ponteiro para a pontuação atual do jogador.
 
 void DeletaLinhas(TipoTela tela[][TAMANHOTELAX],int *pontuacao){ 
 	int linha=0;
@@ -145,8 +213,12 @@ void DeletaLinhas(TipoTela tela[][TAMANHOTELAX],int *pontuacao){
 	}
 }
 
-int PegaInput(){ //funcao que atribui os determinados comandos de acordo com as teclas pressionadas
+///	Função que recebe o comando o usuário.
+///	Atribui determinados comandos de acordo com as teclas pressionadas.
+///
+/// \return o comando do usuário.
 
+int PegaInput(){ 
 	int input;
 	
 	switch(getch()){
@@ -172,15 +244,18 @@ int PegaInput(){ //funcao que atribui os determinados comandos de acordo com as 
 	return input;
 }
 
+///	Função que coordena o tempo de jogo.
+/// Mantém um loop que incrementa o tempo conforme ele passa. O loop é
+///	interrompido caso alguma tecla válida seja pressionada, é chegada a
+/// hora de uma peça descer ou quando o contador deve ser atualizado na
+/// tela.
+///
+/// \param milissegundos um inteiro que representa um segundo.
+///	\param *peca ponteiro para a peça atual do jogo.
+/// \param *flagdesce flag que indica se a peça deve descer na tela.
+/// \return o comando inserido pelo usuário.
 
 int Temporizador(int milissegundos, TipoPeca * peca, int *flagDesce){
-/*	consta aqui o loop que cordena o tempo do jogo.
-*	Ha tres motivos para o jogo sair deste loop e realizar
-*	alguma açao. a primeira é: alguma tecla válida
-*	foi pressionada, segunda: é chegada a hora da 
-*	peça descer. E por último: o "tempo de jogo" nao é
-*	mais o mesmo e precisa ser redesenhado na tela.
-*/
 	int constante = CLOCKS_PER_SEC/1000;
 	int input;
 	static int tempo; //static para que o valor se altere a cada vez que essa funcao é chamada
@@ -206,17 +281,18 @@ int Temporizador(int milissegundos, TipoPeca * peca, int *flagDesce){
 		}
 
 	return input;
-};
+}
 
+///	Função que gerencia todas as funções do jogo.
+/// Mantém o um loop que deve ser percorrido a cada ação realizada,
+/// bem como a interpretação dos inputs e as decisões que devem ser
+/// tomadas pela engine.
+///
+///	\param tela[][TAMANHOTELAX] uma matriz que representa a
+/// tela do jogo.
+/// \return 0 caso não aconteça nenhum erro.
 
 int Loop(TipoTela tela[][TAMANHOTELAX]){
-/*	Consta nessa função o loop que deve ser percorrido
-*	a cada vez que uma ação deva ser realizada (atuali-
-*	zação do tempo, mover peça,[..]), bem como a inter-
-*	pretação dos inputs e as decisões que devem ser to-
-*	madas pela engine.
-*/
-
 	int rotaciona=0,
 	    sair=0,
 	    x=0,
@@ -355,7 +431,5 @@ int Loop(TipoTela tela[][TAMANHOTELAX]){
 	else CriaPlacar(jogador);
 	FimTela(pontuacao);
 	endwin();
-
-return(0);
-
+	return(0);
 }

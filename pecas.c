@@ -1,6 +1,15 @@
-#include <stdio.h>      /* printf, NULL */
-#include <stdlib.h>     /* srand, rand */
-#include <time.h>       /* time */
+///	Gerencia a criação e manipulação de peças no jogo. 
+///	Este módulo implementa as peças do jogo, bem como
+/// todas as operações relacionadas à elas.
+///	
+/// \file pecas.c
+///	\author Anderson
+/// \since 11/04/16
+/// \version 2.6
+
+#include <stdio.h>      
+#include <stdlib.h>     
+#include <time.h>       
 #include <ncurses.h>
 #include "pecas.h"
 #include "tela.h"
@@ -11,21 +20,9 @@
 #define V '-'
 #define NUM_PECAS 8
 
-
-
-struct TipoPeca{
-	TipoTela pecas[TAMANHO_Y][TAMANHO_X];
-	int x;
-	int y;
-	int speed;
-};
-
-
 static int globalCorPeca = 2; 
 
-
-static char MATRIZ_DE_PECAS [NUM_PECAS][TAMANHO_Y][TAMANHO_X] =  
-{
+static char MATRIZ_DE_PECAS [NUM_PECAS][TAMANHO_Y][TAMANHO_X] =  {
 	{
 	 {V,V,B,V,V},
 	 {V,V,B,V,V},
@@ -81,10 +78,20 @@ static char MATRIZ_DE_PECAS [NUM_PECAS][TAMANHO_Y][TAMANHO_X] =
 	}
 };
 
+///	Função que incrementa a velocidade de queda da peça.
+///
+///	\param *peça ponteiro para a peça atual.
+/// \param multiplicador inteiro que representa o quanto a velocidade
+/// de queda da peça será incrementada.
+
 void SpeedUp(TipoPeca *peca, int multiplicador){
 	if (peca->speed < 50) 	
 		peca-> speed *= multiplicador; 
 }
+
+///	Função que rotaciona a peça.
+///
+///	\param *peça ponteiro para a peça atual.
 
 void RotacionaPeca(TipoPeca *peca){
 	
@@ -104,14 +111,16 @@ void RotacionaPeca(TipoPeca *peca){
 	LiberaPeca(pecaAux);
 }
 
-
-
-
+///	Função que copia uma peça de uma matriz à outra.
+///
+///	\param MatrizFonte[][5] matriz que contém a peça de origem.
+/// \param MatrizAlvo[][5] mattriz que receberá a peça.
 
 void CopiaDaMatrizDePecas(char MatrizFonte[][5], TipoTela MatrizAlvo[][5]){
-	int i,j;
+	int i,
+		j;
 	TipoTela bloquete,
-		 vazio;
+		vazio;
 
 	if(globalCorPeca>=6){
 		globalCorPeca=2;
@@ -140,6 +149,9 @@ void CopiaDaMatrizDePecas(char MatrizFonte[][5], TipoTela MatrizAlvo[][5]){
 		}
 	}
 
+///	Função que gera uma peça aleatoriamente.
+/// 
+/// \param *ponteiropeça ponteiro para uma peça.
 
 void GeraPeca(TipoPeca *ponteiroPeca){
 
@@ -172,10 +184,17 @@ void GeraPeca(TipoPeca *ponteiroPeca){
 			RotacionaPeca(ponteiroPeca);
 			RotacionaPeca(ponteiroPeca);
 			break;
-		}
-
-
+	}
 }
+
+///	Função que gera uma peça específica.
+/// Gera uma peça não linear, que varia entre modelos específicos
+/// do jogo.
+///
+///	\param *ponteiroPeca ponteiro para uma peça.
+/// \param indicePeca inteiro que indica qual peça específica deve ser
+/// gerada.
+/// \param direcao inteiro que define a direção da peça a ser gerada.
 
 void GeraPecaEspecifica(TipoPeca *ponteiroPeca, int indicePeca, int direcao){
 
@@ -201,14 +220,23 @@ void GeraPecaEspecifica(TipoPeca *ponteiroPeca, int indicePeca, int direcao){
 			RotacionaPeca(ponteiroPeca);
 			break;
 		}
-
-
 }
 
+///	Função que retorna uma peça e sua posição.
+///
+///	\param *peça ponteiro para peça.
+/// \param y inteiro que indica a posição horizontal da peça.
+/// \param x inteiro que indica a posição vertical da peça.
+/// \return a matriz da peça.
 
 TipoTela PecaGetBloco(TipoPeca *peca, int y, int x){
 	return peca->pecas[y][x];
 }
+
+///	Função que retorna a cor de uma peça.
+///
+///	\param *peca ponteiro para peça.
+/// \return um inteiro que indica a cor da peça.
 
 int PecaGetCor(TipoPeca *peca){
 	int cor=0,
@@ -225,23 +253,48 @@ int PecaGetCor(TipoPeca *peca){
 			}
 		}
 	return cor;
-	}
+}
+
+///	Função que copia uma peça.
+///
+///	\param *pecaIn peça que será copiada;
+/// \param *pecaOut cópia da peça.
 
 void CopiaPeca(TipoPeca *pecaIn, TipoPeca *pecaOut){
 	*pecaOut=*pecaIn;
-	}
+}
+
+///	Função que retorna a posição vertical da peça
+///
+///	\param *peca ponteiro para peça.
+/// \return um inteiro com a posição vertical da peça.
 
 int PecaGetX(TipoPeca *peca){
 	return peca->x;
-	}
+}
+
+///	Função que retorna a posição horizontal da peça
+///
+///	\param *peca ponteiro para peça.
+/// \return um inteiro com a posição horizontal da peça.
 
 int PecaGetY(TipoPeca *peca){
 	return peca->y;
-	}
+}
+
+///	Função que retorna a velocidade de queda da peça.
+///
+///	\param *peca ponteiro para peça.
+/// \return um inteiro com a velocidade da peça.
 
 int PecaGetSpeed(TipoPeca *peca){
 	return peca->speed;
-	}
+}
+
+
+///	Função que aloca memória para uma peça.
+///
+/// \return a nova peça.
 
 TipoPeca *AlocaPeca(){
 
@@ -250,19 +303,32 @@ TipoPeca *AlocaPeca(){
 	novaPeca-> y = 0;
 	novaPeca-> speed = 0;
 	
-
 	return novaPeca;
 
-	}
+}
+
+
+///	Função que desaloca a memória de uma peça.
 
 void LiberaPeca(TipoPeca* peca){
 	free(peca);
-	}
+}
+
+
+///	Função que move uma peça verticalmente.
+///
+///	\param *targetPeca ponteiro para peça.
+/// \param inputX nova posição x da peça.
 
 void MovePecaX (TipoPeca *targetPeca, int inputX){
 	targetPeca->x=inputX;
-	}
+}
+
+///	Função que move uma peça horizontalmente.
+///
+///	\param *targetPeca ponteiro para peça.
+/// \param inputY nova posição y da peça.
 
 void MovePecaY (TipoPeca *targetPeca, int inputY){
 	targetPeca->y=inputY;
-	}
+}

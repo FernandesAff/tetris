@@ -1,3 +1,12 @@
+///	Faz a definição do módulo da tela.
+/// Define as estruturas do módulo e os
+///	protótipos de funções.
+///	
+/// \file tela.c
+///	\author André
+/// \since 11/04/16
+/// \version 2.3
+
 #ifndef _tela_
 #define _tela_
 

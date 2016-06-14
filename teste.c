@@ -1,3 +1,10 @@
+///	Gerencia os testes de funcionamento do programa.
+///	
+/// \file testes.c
+///	\author Cristóvão
+/// \since 11/04/16
+/// \version 2.6
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>

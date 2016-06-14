@@ -1,9 +1,17 @@
+///	Gerencia a criação e manipulação do placar.
+/// Este módulo implementa o placar do jogo, bem
+/// como gerencia as operações relacionados a ele.
+///	
+/// \file tela.c
+///	\author André
+/// \since 11/04/16
+/// \version 2.1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <ncurses.h>
 #include "ranking.h"
-
 
 int* ReceberApelido (){
 	int *apelido, pos=22, i=0;

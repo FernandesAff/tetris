@@ -1,3 +1,12 @@
+///	Gerencia a criação e manipulação da tela.
+/// Este módulo implementa a tela do jogo, bem
+/// como gerencia as operações relacionadas a ela.
+///	
+/// \file tela.c
+///	\author André
+/// \since 11/04/16
+/// \version 2.3
+
 #define BLOCO '0'
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,24 +14,46 @@
 #include "tela.h"
 #include "ranking.h"
 
+///	Função que muda a cor de uma peça.
+///
+///	\param *pecaDada ponteiro para peça.
+/// \param corAferida inteiro referente à cor.
 
 void SetPecaCor(TipoTela* pecaDada, int corAferida){
 	pecaDada->cor = corAferida;
 }
 
+///	Função que indica o caractere a ser usado em uma peça
+///
+///	\param *pecaDada ponteiro para peça.
+/// \param caractereAferido caractere a ser passado para a peça.
+
 void SetPecaCaractere(TipoTela* pecaDada,char caractereAferido){
 	pecaDada->peca = caractereAferido;
 };
+
+///	Função que faz as alterações em uma peça.
+///
+///	\param *pecaDada ponteiro para peça.
+/// \param caractereAferido  caractere a ser passado para a peça.
+/// \param corAferida inteiro referente à cor.
 
 void SetPeca(TipoTela *pecaDada, char caractereAferido, int corAferida){
 	SetPecaCaractere(pecaDada,caractereAferido);
 	SetPecaCor(pecaDada,corAferida);	
 }
 
+///	Função que verifica se uma peça tem o símbolo do fundo.
+///
+///	\param *pecaDada ponteiro para peça.
+/// \return 0 ou 1.
+
 int VerificaSeBloco(TipoTela pecaDada){
 	if (pecaDada.peca==BLOCO) return 1;
 	else return 0;
 }
+
+///	Função que gera e mostra a tela de início.
 
 void InicioTela(){
 	int i,j;
@@ -58,6 +89,10 @@ void InicioTela(){
 	mvvline(3, 2, ACS_VLINE, 15);
 	mvvline(3,28, ACS_VLINE, 15);
 }
+
+///	Função que cria a tela vazia.
+///
+///	\param tela[][25] matriz da tela.
 
 void CriarTela(TipoTela tela[][25]){
 	int i,j;

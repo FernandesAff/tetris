@@ -1,19 +1,36 @@
+///	Faz a definição do módulo de peças.
+/// Define as estruturas do módulo e os protótipos
+/// de funções.
+///	
+/// \file pecas.h
+///	\author Anderson
+/// \since 11/04/16
+/// \version 2.6
+
 #ifndef PECAS_H
 #define PECAS_H
 
-#include <stdio.h>      /* printf, NULL */
-#include <stdlib.h>     /* srand, rand */
-#include <time.h>       /* time */
+#define TAMANHO_X 5
+#define TAMANHO_Y 5
+
+#include <stdio.h>     
+#include <stdlib.h>     
+#include <time.h>       
 #include <ncurses.h>
 #include "tela.h"
 
-typedef struct TipoPeca TipoPeca;
+typedef struct{
+	TipoTela pecas[TAMANHO_Y][TAMANHO_X];
+	int x;
+	int y;
+	int speed;
+} TipoPeca;
 
 TipoPeca *AlocaPeca();
 void LiberaPeca(TipoPeca*);
 void CopiaPeca(TipoPeca*, TipoPeca*);
-void GeraPeca (TipoPeca *); //gera peca aleatoriamente sobre um dado ponteiro TipoPeca
-void GeraPecaEspecifica(TipoPeca *, int, int); //gera peca especifica, para teste 
+void GeraPeca (TipoPeca *);
+void GeraPecaEspecifica(TipoPeca *, int, int);
 void MovePecaX (TipoPeca *, int);
 void MovePecaY (TipoPeca *, int);
 void RotacionaPeca(TipoPeca*);
@@ -22,6 +39,6 @@ int PecaGetCor(TipoPeca*);
 int PecaGetX(TipoPeca*);
 int PecaGetY(TipoPeca*);
 int PecaGetSpeed(TipoPeca*);
-TipoTela PecaGetBloco(TipoPeca*, int, int); //retorna o caractere do bloco na posicao requerida (x,y)
+TipoTela PecaGetBloco(TipoPeca*, int, int);
 
 #endif
