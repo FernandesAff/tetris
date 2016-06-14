@@ -2,15 +2,13 @@
 /// Define as estruturas do módulo e os
 ///	protótipos de funções.
 ///	
-/// \file tela.c
+/// \file tela.h
 ///	\author André
 /// \since 11/04/16
 /// \version 2.3
 
 #ifndef _tela_
 #define _tela_
-
-
 #include <stdio.h>
 #include <stdlib.h>
 

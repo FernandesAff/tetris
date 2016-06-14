@@ -2,7 +2,7 @@
 /// Este módulo define as estruturas do
 /// módulo e os protótipos de funções.
 ///	
-/// \file ranking.c
+/// \file ranking.h
 ///	\author André
 /// \since 11/04/16
 /// \version 2.1

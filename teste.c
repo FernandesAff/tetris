@@ -1,6 +1,6 @@
 ///	Gerencia os testes de funcionamento do programa.
 ///	
-/// \file testes.c
+/// \file teste.c
 ///	\author Cristóvão
 /// \since 11/04/16
 /// \version 2.6
@@ -15,6 +15,8 @@
 #include "engine.h"
 #include "pecas.h"
 
+///	Função que testa a alocação de peças.
+
 void TesteAlocaPeca (void){
 	int flagNulo = 0;
 	TipoPeca *peca;
@@ -24,6 +26,8 @@ void TesteAlocaPeca (void){
 
 	LiberaPeca(peca);
 }
+
+///	Função que testa as cores das peças.
 
 void TesteCorPecaCorFundo (void){
 	TipoPeca *peca;
@@ -39,6 +43,9 @@ void TesteCorPecaCorFundo (void){
 	CU_ASSERT_FALSE(resultado);
 	LiberaPeca(peca);		
 }
+
+///	Função que testa se as cores das peças geradas são
+/// diferentes a cada rodada.
 
 void TesteCorPecaDiferente (void){
 	TipoPeca *peca1, *peca2;
@@ -56,6 +63,8 @@ void TesteCorPecaDiferente (void){
 	LiberaPeca(peca2);
 }
 
+///	Função que testa se o jogo acaba com a chegada no
+/// limite.
 
 void TestaMorte(void){
 	int morte = 0,
@@ -91,8 +100,9 @@ void TestaMorte(void){
 	morte = VerificaMorte(tela);
 
 	CU_ASSERT_FALSE(morte); 
-
 }
+
+///	Função que testa a colisão com as paredes da tela.
 
 
 void TestaColisaoParede(void){ // testa colisao quando a peca excede o limite da tela
@@ -150,7 +160,8 @@ void TestaColisaoParede(void){ // testa colisao quando a peca excede o limite da
 }
 
 
-// testa colisao da peca com os blocos da tela
+/// Funçao que testa a colisao da peca com os blocos da tela.
+
 void TestaColisaoBloco(void){ 
 
 	TipoTela tela[15][25];
@@ -183,6 +194,7 @@ void TestaColisaoBloco(void){
 	LiberaPeca(peca);
 }
 
+///	Função que testa se uma linha completa é limpada.
 
 void TesteLimpaLinha(void){
 	TipoTela tela[15][25];
@@ -208,9 +220,10 @@ void TesteLimpaLinha(void){
 			}
 		}	
 	}
-
 	CU_ASSERT_FALSE(resultado);	
 }
+
+///	Função que testa a inclusão de uma nova peça na tela.
 
 void TestaPecaNoTopo(void){
 
@@ -243,8 +256,9 @@ void TestaPecaNoTopo(void){
 	}
 
 	CU_ASSERT_TRUE(colisao);
-
 }
+
+///	Função que cria a suíte de testes.
 
 void  AdicionarSuite(void){
 	CU_pSuite suite;

@@ -2,7 +2,7 @@
 /// Este módulo implementa a tela do jogo, bem
 /// como gerencia as operações relacioanas à ela.
 ///	
-/// \file tela.c
+/// \file main.c
 ///	\author Anderson, André, Cristóvão, Pedro Vítor.
 /// \since 11/04/16
 /// \version 2.0

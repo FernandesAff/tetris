@@ -105,6 +105,12 @@ void CriarTela(TipoTela tela[][25]){
 	}	
 }
 
+///	Função que mostra a tela.
+///
+///	\param *tela[][25] matriz da tela.
+/// \param pontos inteiro contendo a pontuação atual.
+/// \param tempoDecorrido inteiro contendo o tempo decorrido.
+
 void MostrarTela(TipoTela tela[][25], int pontos, int tempoDecorrido){
 	int i,j;
 
@@ -136,6 +142,8 @@ void MostrarTela(TipoTela tela[][25], int pontos, int tempoDecorrido){
 		}
 	}
 }
+
+///	Função que gera e mostra a tela de fim de jogo.
 
 void FimTela(int pontos){
 	int i;

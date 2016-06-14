@@ -2,7 +2,7 @@
 /// Este módulo implementa o placar do jogo, bem
 /// como gerencia as operações relacionados a ele.
 ///	
-/// \file tela.c
+/// \file ranking.c
 ///	\author André
 /// \since 11/04/16
 /// \version 2.1
@@ -12,6 +12,10 @@
 #include <time.h>
 #include <ncurses.h>
 #include "ranking.h"
+
+///	Função que recebe o apelido do jogador.
+///
+///	\return um ponteiro para o apelido.
 
 int* ReceberApelido (){
 	int *apelido, pos=22, i=0;
@@ -61,6 +65,13 @@ int* ReceberApelido (){
     return apelido;
 }
 
+///	Função que converte o apelido de um vetor de caracteres
+/// para um vetor de inteiros.
+///
+/// \param *apelido ponteiro para o apelido do jogador
+/// \param *jogador ponteiro para a estrutura contendo os
+/// dados do jogador.
+
 void ConverterApelido(int *apelido, TipoJogador *jogador){
 	int i=0;
 
@@ -70,6 +81,11 @@ void ConverterApelido(int *apelido, TipoJogador *jogador){
 	}
 	jogador->apelido[i]='\0';
 }
+
+///	Função que recebe a data em que o jogo foi executado.
+///
+///	\param *jogador ponteiro para a estrutura contendo os
+/// dados do jogador.
 
 void ReceberData(TipoJogador *jogador){
 	struct tm *local;
@@ -82,6 +98,10 @@ void ReceberData(TipoJogador *jogador){
 	jogador->mes=local->tm_mon+1;
 	jogador->ano=local->tm_year+1900;
 }	
+
+///	Função que verifica a existência de um arquivo com o placar.
+///
+/// \return 1 ou 0, caso exista ou não um arquivo, respectivamente.
 
 int VerificaPlacar(){
 	FILE *fp;
@@ -97,6 +117,10 @@ int VerificaPlacar(){
 	}	
 }	
 
+///	Função que cria um arquivo com o placar.
+///
+/// \param jogador estrutura contendo os dados do jogador.
+
 void CriaPlacar (TipoJogador jogador){
 	FILE *fp;
 
@@ -104,6 +128,10 @@ void CriaPlacar (TipoJogador jogador){
 	fprintf(fp, "%s %d %d/%d/%d %d\n", jogador.apelido,jogador.pontos, jogador.dia,jogador.mes,jogador.ano,jogador.tempo);
 	fclose(fp);
 }
+
+///	Função que atualiza o placar.
+///
+/// \param jogador estrutura contendo os dados do jogador.
 
 void AtualizaPlacar (TipoJogador jogador){
 	FILE *fp, *fp2;
