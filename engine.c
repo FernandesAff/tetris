@@ -16,7 +16,13 @@
 #define VAZIO '-'
 #include <ncurses.h>
 #include "tela.h"
-#include "pecas.h"
+
+#ifndef DEBUG
+	#include "pecas.h"
+#else 
+	#include "pecas_inst.h"
+#endif
+
 #include "time.h"
 #include "ranking.h"
 #include "engine.h"

@@ -11,7 +11,11 @@
 #include <stdlib.h>     
 #include <time.h>       
 #include <ncurses.h>
-#include "pecas.h"
+
+#define PECAS_OWN
+	#include "pecas.h"
+#undef PECAS_OWN
+
 #include "tela.h"
 #define TAMANHO_X 5
 #define TAMANHO_Y 5
