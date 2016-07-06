@@ -62,6 +62,13 @@ int* ReceberApelido (){
     			break;
     	}
     }
+    if(apelido[0]=='\n'){
+    	apelido[0]='a';
+    	apelido[1]='n';
+    	apelido[2]='o';
+    	apelido[3]='n';
+    	apelido[4]='\n';
+    }
     return apelido;
 }
 

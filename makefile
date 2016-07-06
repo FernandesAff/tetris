@@ -18,7 +18,7 @@ dmain.o: main.c tela.c tela.h ranking.c ranking.h engine.c engine.h pecas.c peca
 	gcc -c main.c
 
 teste.o: teste.c tela.c ranking.c engine.c pecas.c
-	gcc -c teste.c
+	gcc -ftest-coverage -fprofile-arcs -c teste.c
 
 tela.o: tela.c tela.h
 	gcc -c tela.c
