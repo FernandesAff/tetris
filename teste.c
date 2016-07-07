@@ -17,7 +17,8 @@
 #include "ranking.h"
 
 /// Função que testa a conversão de um vetor de inteiros para
-/// uma string.
+/// uma string. O teste abrange apenas a entrada e a saída da
+/// função, avaliando se corresponde ao esperado.
 
 void TesteConverteVetor(void){
 	TipoJogador jogador;
@@ -31,7 +32,10 @@ void TesteConverteVetor(void){
 	CU_ASSERT_STRING_EQUAL(jogador.apelido, "abcde")
 } 
 
-/// Função que testa o valor máximo do dia recebido.
+/// Função que testa a data recebida pelo sistema. Para isso 
+/// foram considerados os valores limítrofes do dia, do mês 
+/// e do ano, para com isso determinar se a data recebida pelo
+/// sistema é real e assume valores razoáveis.
 
 void TesteData(void){
 	TipoJogador jogador;
@@ -61,6 +65,8 @@ void TesteData(void){
 }
 
 /// Função que testa a criação de um arquivo contendo o placar.
+/// O teste verifica se é criado um arquivo após a entrada da 
+/// primeira pontuação do jogo.
 
 void TesteEntradaPlacar(void){
 	TipoJogador jogador;
@@ -79,7 +85,8 @@ void TesteEntradaPlacar(void){
 }
 
 /// Função que testa a inserção de novos dados no arquivo
-/// contendo o placar.
+/// contendo o placar. O teste verifica se o arquivo contendo
+/// o placar foi atualizado.
 
 void TesteAtualizaPlacar(void){
 	FILE *fp;
@@ -178,6 +185,28 @@ void TesteCorPecaDiferente (void){
 	LiberaPeca(peca2);
 }
 
+/// Função que testa a inserção das características de
+/// uma peça ao mostrá-la na tela.
+
+void TesteSetPeca (void){
+	TipoTela unidade;
+
+	unidade.cor=1;
+	unidade.peca='a';
+
+	SetPecaCor(&unidade,2);
+	CU_ASSERT_EQUAL(unidade.cor,2);
+
+	SetPecaCaractere(&unidade,'b');
+	CU_ASSERT_EQUAL(unidade.peca,'b');
+
+	SetPeca(&unidade,'c', 3);
+	CU_ASSERT_EQUAL(unidade.cor,3);
+	CU_ASSERT_EQUAL(unidade.peca,'c');
+}
+
+/// Função que cria  suíte de testes do módulo pecas.
+
 void AdicionarSuitePecas(void){
 	CU_pSuite suite;
 	
@@ -186,6 +215,7 @@ void AdicionarSuitePecas(void){
 	CU_ADD_TEST(suite, TesteAlocaPeca);	
 	CU_ADD_TEST(suite, TesteCorPecaCorFundo);
 	CU_ADD_TEST(suite, TesteCorPecaDiferente);
+	CU_ADD_TEST(suite, TesteSetPeca);
 }
 
 ///	Função que testa se o jogo acaba com a chegada no
@@ -228,7 +258,6 @@ void TestaMorte(void){
 }
 
 ///	Função que testa a colisão com as paredes da tela.
-
 
 void TestaColisaoParedeCaixaPreta(void){ 
 
@@ -278,8 +307,7 @@ void TestaColisaoParedeCaixaPreta(void){
 	LiberaPeca(peca);
 }
 
-
-/// Funçao que testa a colisao da peca com os blocos da tela.
+/// Função que testa a colisao da peca com os blocos da tela.
 
 void TestaColisaoBlocoCaixaPreta(void){ 
 
@@ -313,6 +341,8 @@ void TestaColisaoBlocoCaixaPreta(void){
 	LiberaPeca(peca);
 }
 
+/// Função que testa os casos de colisão usando caixa aberta, ou seja,
+/// considerando a implementação das funções de colisão.
 
 void TestaColisaoCaixaAberta(void){ 
 
@@ -323,15 +353,15 @@ void TestaColisaoCaixaAberta(void){
 
 	CriarTela(tela);
 	peca = AlocaPeca();
-	GeraPecaEspecifica(peca, 3, 0); // peca de indice 3 (abaixo), rotacao 0
+	GeraPecaEspecifica(peca, 3, 0); // peca de indice 3 (abaixo), rotacao 0	
 	
-//	 -----
-//	 -00--
-//	 --0--
-//	 --00-
-//	 -----
-
-//casos em que nao colide
+	//	 -----
+	//	 -00--
+	//	 --0--
+	//	 --00-
+	//	 -----
+	
+	//casos em que nao colide
 
 	MovePecaX (peca, 0); 
 	MovePecaY (peca, 0);		
@@ -340,9 +370,10 @@ void TestaColisaoCaixaAberta(void){
 
 	CU_ASSERT_FALSE(colisao);
 
-//casos em que colide
+	//casos em que colide
 
 	//(PecaGetX(peca)+j)>TAMANHOTELAX-1
+
 	MovePecaX (peca, 50); 
 	MovePecaY (peca, 0);		
 
@@ -352,6 +383,7 @@ void TestaColisaoCaixaAberta(void){
 
 	//Verifica colisao com parede:
 	//(PecaGetX(peca)+j)<0
+
 	MovePecaX (peca, -50); 
 	MovePecaY (peca, 0);		
 
@@ -375,7 +407,7 @@ void TestaColisaoCaixaAberta(void){
 
 	CU_ASSERT_TRUE(colisao);
 
-//eventos em que ha colisao com blocos
+	//eventos em que ha colisao com blocos
 
 	MovePecaX (peca, 10); 
 	MovePecaY (peca, 10);

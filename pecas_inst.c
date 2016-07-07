@@ -1,3 +1,12 @@
+///	Implementa a instrumentação do módulo peças.
+/// Garante a validade das entradas e saídas do
+/// módulo peças.
+///	
+/// \file pecas_inst.c
+///	\author Cristóvão
+/// \since 05/07/16
+/// \version 1.1
+
 #include <assert.h>
 #include "pecas.h"
 #include <time.h>
@@ -63,6 +72,3 @@ void SpeedUpInst(TipoPeca *peca, int valor){
 	assert(peca->speed <50);
 	
 }
-
-
-
