@@ -72,8 +72,8 @@ int* ReceberApelido (){
     return apelido;
 }
 
-///	Função que converte o apelido de um vetor de caracteres
-/// para um vetor de inteiros.
+///	Função que converte o apelido de um vetor de inteiros
+/// para um vetor de caracteres.
 ///
 /// \param *apelido ponteiro para o apelido do jogador
 /// \param *jogador ponteiro para a estrutura contendo os
