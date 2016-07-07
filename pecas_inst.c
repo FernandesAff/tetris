@@ -60,6 +60,7 @@ void SpeedUpInst(TipoPeca *peca, int valor){
 	SpeedUp(peca,valor);
 	//assertivas de saida
 	assert(peca != NULL);
+	assert(peca->speed <50);
 	
 }
 

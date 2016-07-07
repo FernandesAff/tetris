@@ -1,6 +1,6 @@
 all: programa limpao limpagcno
 
-debug: ddebug teste limpao	
+debug: ddebug teste limpao limpagcno
 
 programa: main.o tela.o ranking.o engine.o  pecas.o
 	gcc -ftest-coverage -fprofile-arcs main.o tela.o ranking.o engine.o pecas.o -o programa -lncurses

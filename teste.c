@@ -230,7 +230,7 @@ void TestaMorte(void){
 ///	Função que testa a colisão com as paredes da tela.
 
 
-void TestaColisaoParede(void){ 
+void TestaColisaoParedeCaixaPreta(void){ 
 
 	TipoTela tela[15][25] ;
 	TipoPeca *peca;
@@ -281,7 +281,7 @@ void TestaColisaoParede(void){
 
 /// Funçao que testa a colisao da peca com os blocos da tela.
 
-void TestaColisaoBloco(void){ 
+void TestaColisaoBlocoCaixaPreta(void){ 
 
 	TipoTela tela[15][25];
 	TipoPeca *peca;
@@ -309,6 +309,83 @@ void TestaColisaoBloco(void){
 	colisao = VerificaColisao(peca, tela);
 
 	CU_ASSERT_FALSE(colisao);
+
+	LiberaPeca(peca);
+}
+
+
+void TestaColisaoCaixaAberta(void){ 
+
+	TipoTela tela[15][25];
+	TipoPeca *peca;
+	int colisao = 0;
+
+
+	CriarTela(tela);
+	peca = AlocaPeca();
+	GeraPecaEspecifica(peca, 3, 0); // peca de indice 3 (abaixo), rotacao 0
+	
+//	 -----
+//	 -00--
+//	 --0--
+//	 --00-
+//	 -----
+
+//casos em que nao colide
+
+	MovePecaX (peca, 0); 
+	MovePecaY (peca, 0);		
+
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_FALSE(colisao);
+
+//casos em que colide
+
+	//(PecaGetX(peca)+j)>TAMANHOTELAX-1
+	MovePecaX (peca, 50); 
+	MovePecaY (peca, 0);		
+
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_TRUE(colisao);
+
+	//Verifica colisao com parede:
+	//(PecaGetX(peca)+j)<0
+	MovePecaX (peca, -50); 
+	MovePecaY (peca, 0);		
+
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_TRUE(colisao);
+
+	//PecaGetY>TAMANHOTELAY-1
+	MovePecaX (peca, 0); 
+	MovePecaY (peca, 100);		
+
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_TRUE(colisao);
+
+	//(PecaGetY(peca)+i)<0
+	MovePecaX (peca, 0); 
+	MovePecaY (peca, -100);		
+
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_TRUE(colisao);
+
+//eventos em que ha colisao com blocos
+
+	MovePecaX (peca, 10); 
+	MovePecaY (peca, 10);
+	//copia o bloco atual na tela
+	AddBloco(peca, tela);
+
+	//VerificaSeBloco(PecaGetBloco(peca,j,i) = TRUE
+	colisao = VerificaColisao(peca, tela);
+
+	CU_ASSERT_TRUE(colisao);
 
 	LiberaPeca(peca);
 }
@@ -383,11 +460,11 @@ void AdicionarSuiteEngine(void){
 	CU_pSuite suite;
 	
 	suite = CU_add_suite("Testes de engine",NULL,NULL);
-
 	CU_ADD_TEST(suite, TestaMorte);
 	CU_ADD_TEST(suite, TesteLimpaLinha);
-	CU_ADD_TEST(suite, TestaColisaoParede);
-	CU_ADD_TEST(suite, TestaColisaoBloco);
+	CU_ADD_TEST(suite, TestaColisaoParedeCaixaPreta);
+	CU_ADD_TEST(suite, TestaColisaoBlocoCaixaPreta);
+	CU_ADD_TEST(suite, TestaColisaoCaixaAberta);
 	CU_ADD_TEST(suite, TestaPecaNoTopo);
 }
 

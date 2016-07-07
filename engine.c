@@ -78,10 +78,10 @@ int VerificaColisao(TipoPeca *peca, TipoTela tela[][TAMANHOTELAX]){
 	//verifica colisao com parede:
 	for(i=0;i<5;i++) for(j=0;j<5;j++){
 		if (VerificaSeBloco(PecaGetBloco(peca,i,j))) {
-			if ( (PecaGetX(peca)+j)>TAMANHOTELAX-1) colisao=1; //colide à direita
-			else if ((PecaGetX(peca)+j)<0) colisao=1; 		//colide à esquerda	
-			else if ( (PecaGetY(peca)+i)>TAMANHOTELAY-1) colisao=1; //colide abaixo
-			else if ((PecaGetY(peca)+i)<0) colisao=1; 		//colide acima
+			if ( (PecaGetX(peca)+j)>TAMANHOTELAX-1) 	colisao=1; //colide à direita
+			else if ((PecaGetX(peca)+j)<0) 			colisao=1; //colide à esquerda	
+			else if ( (PecaGetY(peca)+i)>TAMANHOTELAY-1)    colisao=1; //colide abaixo
+			else if ((PecaGetY(peca)+i)<0) 			colisao=1; //colide acima
 		}
 	}
 	//verifica colisao com blocos:
